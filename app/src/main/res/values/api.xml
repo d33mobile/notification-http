@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="enable_accessibility_service">true</bool>
+    <bool name="enable_notification_listener_service">false</bool>
+</resources>

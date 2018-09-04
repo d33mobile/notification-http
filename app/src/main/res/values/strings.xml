@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res/android">
+    <!-- title of the app -->
+    <string name="app_name" translatable="false">NotificationLog</string>
+
+    <!-- title for the app list (single pane mode) -->
+    <string name="title_app_list">Apps</string>
+
+    <!-- description for clear history action -->
+    <string name="action_clear">Clear history</string>
+
+    <!-- dialog: clear history -->
+    <string name="dialog_clear_all_title">Clear history of all Apps?</string>
+    <string name="dialog_clear_app_title">Clear history of <xliff:g example="GMail" id="app">%1$s</xliff:g>?</string>
+    <string name="dialog_clear_text">This can\'t be undone</string>
+    <string name="dialog_clear_positive">Clear</string>
+    <string name="dialog_clear_negative">Cancel</string>
+
+    <!-- text if there aren't any notifications saved -->
+    <string name="notification_list_empty">There are not any notifications yet</string>
+
+    <!-- card which says how to enable the notification logging -->
+    <string name="card_enable_service_title">Permission required</string>
+    <string name="card_enable_service_text">
+        NotificationLog needs your permission to access and save your notifications.
+        The data is only saved at your device and not transmitted.
+    </string>
+    <string name="card_enable_service_button">Allow</string>
+
+    <!-- special app entry which merges the data of all apps -->
+    <string name="merge_all_apps">All Apps</string>
+
+    <!-- title for the about dialog -->
+    <string name="title_activity_about">About</string>
+    <string name="about_license">License</string>
+    <string name="about_version">Version %s</string>
+    <string name="about_source_title">Source Code</string>
+    <string name="about_source_text" translatable="false"><a href="https://gitlab.com/notificationlog/notificationlog-android">https://gitlab.com/notificationlog/notificationlog-android</a></string>
+    <string name="about_libraries">contained Software</string>
+
+    <string name="action_export">Export</string>
+    <string name="export_done">Export finished</string>
+    <string name="export_error">Export failed</string>
+</resources>

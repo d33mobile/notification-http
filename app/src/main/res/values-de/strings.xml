@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res/android">
+    <!-- title for the app list (single pane mode) -->
+    <string name="title_app_list">Apps</string>
+
+    <!-- description for clear history action -->
+    <string name="action_clear">Verlauf löschen</string>
+
+    <!-- dialog: clear history -->
+    <string name="dialog_clear_all_title">Verlauf aller Anwendungen löschen?</string>
+    <string name="dialog_clear_app_title">Verlauf von <xliff:g id="app" example="GMail">%1$s</xliff:g> löschen?</string>
+    <string name="dialog_clear_text">Diese Aktion kann nicht rückgängig gemacht werden</string>
+    <string name="dialog_clear_positive">Löschen</string>
+    <string name="dialog_clear_negative">Abbrechen</string>
+
+    <!-- text if there aren't any notifications saved -->
+    <string name="notification_list_empty">Es wurden bis jetzt keine Benachrichtigungen gespeichert</string>
+
+    <!-- card which says how to enable the notification logging -->
+    <string name="card_enable_service_title">Berechtigung benötigt</string>
+    <string name="card_enable_service_text">
+        NotificationLog benötigt Ihre Genehmigung um auf Ihre Benachrichtigungen zuzugreifen und diese zu speichern.
+        Die Daten werden nur auf Ihrem Gerät gespeichert und nicht übertragen.
+    </string>
+    <string name="card_enable_service_button">Erlauben</string>
+
+    <!-- special app entry which merges the data of all apps -->
+    <string name="merge_all_apps">Alle Apps</string>
+
+    <!-- title for the about dialog -->
+    <string name="title_activity_about">Über</string>
+    <string name="about_license">Lizenz</string>
+    <string name="about_version">Version %s</string>
+    <string name="about_source_title">Quelltext</string>
+    <string name="about_libraries">enthaltene Software</string>
+
+    <string name="action_export">Exportieren</string>
+
+    <string name="export_done">Export abgeschlossen</string>
+    <string name="export_error">Export fehlgeschlagen</string>
+</resources>
