@@ -1,0 +1,1 @@
+NotificationLog logs the system notifications locally and allows to view, export and delete all of them or all of one App.

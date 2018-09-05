@@ -1,0 +1,1 @@
+NotificationLog protokolliert die Systembenachrichtigungen lokal und ermöglicht das Anzeigen, Exportieren und Löschen von allen Benachrichtigungen oder allen Benachrichtigungen einer App.
