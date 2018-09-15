@@ -9,3 +9,4 @@ NotificationLog is an Android App which logs the notifications (locally) and all
 
 - <https://gitlab.com/notificationlog/notificationlog-android/tags>
 - <https://play.google.com/store/apps/details?id=de.jl.notificationlog>
+- <https://f-droid.org/de/packages/de.jl.notificationlog/>
