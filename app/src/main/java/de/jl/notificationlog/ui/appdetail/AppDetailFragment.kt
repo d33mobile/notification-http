@@ -2,12 +2,12 @@ package de.jl.notificationlog.ui.appdetail
 
 import android.annotation.TargetApi
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.paging.LivePagedListBuilder
+import androidx.lifecycle.Observer
+import androidx.paging.LivePagedListBuilder
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.*
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase

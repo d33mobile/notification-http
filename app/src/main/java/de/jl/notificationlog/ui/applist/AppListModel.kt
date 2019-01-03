@@ -1,7 +1,7 @@
 package de.jl.notificationlog.ui.applist
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 
 class AppListModel: ViewModel() {
     companion object {

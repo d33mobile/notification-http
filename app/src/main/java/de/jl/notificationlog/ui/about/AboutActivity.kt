@@ -1,7 +1,7 @@
 package de.jl.notificationlog.ui.about
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import de.jl.notificationlog.BuildConfig
 import de.jl.notificationlog.R

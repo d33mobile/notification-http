@@ -2,7 +2,7 @@ package de.jl.notificationlog.notification
 
 import android.content.Context
 import android.os.Looper
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView

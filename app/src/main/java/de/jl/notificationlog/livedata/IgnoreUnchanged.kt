@@ -1,7 +1,7 @@
 package de.jl.notificationlog.livedata
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import java.util.concurrent.atomic.AtomicBoolean
 
 fun <T> LiveData<T>.ignoreUnchanged(): LiveData<T> {

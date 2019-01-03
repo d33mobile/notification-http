@@ -1,6 +1,6 @@
 package de.jl.notificationlog.data
 
-import android.arch.persistence.room.ColumnInfo
+import androidx.room.ColumnInfo
 
 data class AppWithNotification(
         @ColumnInfo(name = "package")
