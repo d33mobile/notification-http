@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.github.triplet.play'
 
 android {
     compileSdkVersion 28
@@ -18,10 +19,16 @@ android {
             }
         }
     }
+    signingConfigs {
+        release {
+            // empty
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     dataBinding {
@@ -49,4 +56,22 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.1.0-alpha03'
     implementation 'androidx.paging:paging-runtime:2.1.0-rc01'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0-alpha01'
+}
+
+play {
+    jsonFile = file("play-key.json")
+    track = "production"
+}
+
+// based on https://stackoverflow.com/a/20573171
+def propsFile = project.file('keystore.properties')
+def configName = 'release'
+
+if (propsFile.exists() && android.signingConfigs.hasProperty(configName)) {
+    def props = new Properties()
+    props.load(new FileInputStream(propsFile))
+    android.signingConfigs[configName].storeFile = file(props['storeFile'])
+    android.signingConfigs[configName].storePassword = props['storePassword']
+    android.signingConfigs[configName].keyAlias = props['keyAlias']
+    android.signingConfigs[configName].keyPassword = props['keyPassword']
 }
