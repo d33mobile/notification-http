@@ -19,8 +19,12 @@
     </string>
 
     <string name="contained_libraries" translatable="false">
-        Android Support Library (Apache License, Version 2.0)
-        \nAndroid Design Library (Apache License, Version 2.0)
-        \nAndroid Architecture Components (Apache License, Version 2.0)
+        AndroidX Support Library (Apache License, Version 2.0)
+        \nAndroidX Constraint Layout (Apache License, Version 2.0)
+        \nAndroidX RecyclerView (Apache License, Version 2.0)
+        \nGoogle Material (Apache License, Version 2.0)
+        \nAndroidX Room (Apache License, Version 2.0)
+        \nAndroidX Paging (Apache License, Version 2.0)
+        \nAndroidX Lifecycle Extensions (Apache License, Version 2.0)
     </string>
 </resources>
