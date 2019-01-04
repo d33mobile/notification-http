@@ -19,12 +19,12 @@ object NotificationParser {
     fun parse(notification: Notification, context: Context): NotificationData {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val extras = notification.extras
-            val title = extras.getString("android.title")!!.toString()
-            val text = extras.getCharSequence("android.text")!!.toString()
+            val title = extras.getString("android.title")?.toString()
+            val text = extras.getCharSequence("android.text")?.toString()
 
             return NotificationData(
-                    title = title,
-                    text = text
+                    title = title ?: "",
+                    text = text ?: ""
             )
         } else {
             return parseOld(notification, context)
