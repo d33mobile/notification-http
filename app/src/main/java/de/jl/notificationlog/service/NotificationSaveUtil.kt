@@ -5,12 +5,17 @@ import android.content.Context
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.NotificationItem
 import de.jl.notificationlog.notification.NotificationParser
+import de.jl.notificationlog.util.Configuration
 import java.util.concurrent.Executors
 
 object NotificationSaveUtil {
     private val saveThread = Executors.newSingleThreadExecutor()
 
     fun save(notification: Notification, packageName: String, context: Context) {
+        if (!Configuration.with(context).shouldLogNotifications(packageName)) {
+            return
+        }
+
         val item = NotificationParser.parse(notification, context)
 
         save(NotificationItem(

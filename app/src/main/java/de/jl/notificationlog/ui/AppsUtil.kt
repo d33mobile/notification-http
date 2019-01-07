@@ -25,4 +25,16 @@ object AppsUtil {
             return ContextCompat.getDrawable(context, R.mipmap.ic_app_removed)
         }
     }
+
+    fun getAllApps(context: Context): List<App> = context.packageManager.getInstalledApplications(0).map {
+        App(
+                packageName = it.packageName,
+                title = it.loadLabel(context.packageManager).toString()
+        )
+    }
 }
+
+data class App(
+        val packageName: String,
+        val title: String
+)

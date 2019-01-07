@@ -13,6 +13,7 @@ import de.jl.notificationlog.ui.appdetail.AppDetailActivity
 import de.jl.notificationlog.ui.appdetail.AppDetailFragment
 import de.jl.notificationlog.ui.applist.AppListFragment
 import de.jl.notificationlog.ui.applist.AppListModel
+import de.jl.notificationlog.ui.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_app_list.*
 import kotlinx.android.synthetic.main.app_list.*
 
@@ -97,6 +98,11 @@ class AppListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when {
         item.itemId == R.id.action_about -> {
             startActivity(Intent(this, AboutActivity::class.java))
+
+            true
+        }
+        item.itemId == R.id.action_settings -> {
+            startActivity(Intent(this, SettingsActivity::class.java))
 
             true
         }

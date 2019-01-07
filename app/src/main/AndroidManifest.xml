@@ -53,9 +53,14 @@
         </service>
 
         <activity
-            android:exported="false"
             android:name=".ui.about.AboutActivity"
+            android:exported="false"
             android:label="@string/title_activity_about"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

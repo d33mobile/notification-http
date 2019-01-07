@@ -27,6 +27,10 @@
     </string>
     <string name="card_enable_service_button">Allow</string>
 
+    <!-- card which informs that logging was disabled for one App -->
+    <string name="card_logging_disabled_title">Logging was disabled for %s</string>
+    <string name="card_logging_disabled_text">You can change that in the menu</string>
+
     <!-- special app entry which merges the data of all apps -->
     <string name="merge_all_apps">All Apps</string>
 
@@ -41,4 +45,12 @@
     <string name="action_export">Export</string>
     <string name="export_done">Export finished</string>
     <string name="export_error">Export failed</string>
+
+    <string name="action_checkbox_enable_logging">log %s</string>
+
+    <!-- settings screen -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="settings_radio_blacklist">Log all Apps except the selected ones</string>
+    <string name="settings_radio_whitelist">Log only the following Apps</string>
+    <string name="settings_search_hint">Search Apps</string>
 </resources>

@@ -9,10 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.*
+import androidx.lifecycle.MutableLiveData
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.databinding.AppDetailBinding
+import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.applist.AppListModel
+import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ExportAsyncTask
 
 /**
@@ -34,11 +37,18 @@ class AppDetailFragment : Fragment() {
     }
 
     val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME) }
+    val isLoggingEnabled = MutableLiveData<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        isLoggingEnabled.value = Configuration.with(context!!).shouldLogNotifications(selectedPackageName)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +67,12 @@ class AppDetailFragment : Fragment() {
                     binding.isListEmpty = it != null && it.isEmpty()
                 })
 
+        isLoggingEnabled.observe(this, Observer {
+            binding.loggingDisabled = selectedPackageName != AppListModel.ALL_APPS && !it
+        })
+
         binding.recycler.adapter = adapter
+        binding.appTitle = AppsUtil.getAppTitle(selectedPackageName, context!!)
 
         return binding.root
     }
@@ -66,6 +81,27 @@ class AppDetailFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
 
         inflater.inflate(R.menu.menu_app_detail, menu)
+
+        menu.findItem(R.id.action_checkbox_enable_logging).apply {
+            if (selectedPackageName == AppListModel.ALL_APPS) {
+                isVisible = false
+            } else {
+                title = getString(R.string.action_checkbox_enable_logging, AppsUtil.getAppTitle(selectedPackageName, context!!))
+
+                isLoggingEnabled.observe(this@AppDetailFragment, Observer {
+                    isChecked = it
+                })
+
+                setOnMenuItemClickListener {
+                    val newValue = !it.isChecked
+
+                    Configuration.with(context!!).setShouldLogNotifications(selectedPackageName, newValue)
+                    isLoggingEnabled.value = newValue
+
+                    true
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when {

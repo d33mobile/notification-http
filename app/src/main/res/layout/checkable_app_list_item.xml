@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="isChecked"
+            type="boolean" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:padding="8dp"
+        android:background="?selectableItemBackground"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/app_icon"
+            tools:src="@mipmap/ic_launcher"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size" />
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@{title}"
+            android:layout_gravity="center_vertical"
+            android:textAppearance="?android:textAppearanceLarge"
+            tools:text="App-Title"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:visibility="@{isChecked ? View.GONE : View.VISIBLE}"
+            android:src="@drawable/ic_check_box_outline_blank_black_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:visibility="@{isChecked ? View.VISIBLE : View.GONE}"
+            android:tint="?colorPrimary"
+            android:src="@drawable/ic_check_box_black_48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</layout>

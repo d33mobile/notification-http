@@ -24,6 +24,10 @@
     </string>
     <string name="card_enable_service_button">Erlauben</string>
 
+    <!-- card which informs that logging was disabled for one App -->
+    <string name="card_logging_disabled_title">Protokollierung von %s wurde deaktiviert</string>
+    <string name="card_logging_disabled_text">Sie können das im Menü andern</string>
+
     <!-- special app entry which merges the data of all apps -->
     <string name="merge_all_apps">Alle Apps</string>
 
@@ -38,4 +42,12 @@
 
     <string name="export_done">Export abgeschlossen</string>
     <string name="export_error">Export fehlgeschlagen</string>
+
+    <string name="action_checkbox_enable_logging">Protokolliere %s</string>
+
+    <!-- settings screen -->
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="settings_radio_blacklist">Die ausgewählten Apps nicht protokollieren</string>
+    <string name="settings_radio_whitelist">Nur die ausgewählten Apps protokollieren</string>
+    <string name="settings_search_hint">Apps suchen</string>
 </resources>
