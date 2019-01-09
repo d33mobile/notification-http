@@ -50,4 +50,9 @@
     <string name="settings_radio_blacklist">Die ausgewählten Apps nicht protokollieren</string>
     <string name="settings_radio_whitelist">Nur die ausgewählten Apps protokollieren</string>
     <string name="settings_search_hint">Apps suchen</string>
+
+    <!-- sorting -->
+    <string name="sorting_title">Sortierung</string>
+    <string name="sort_oldest_first">ältestes zuerst</string>
+    <string name="sort_newest_first">neustes zuerst</string>
 </resources>

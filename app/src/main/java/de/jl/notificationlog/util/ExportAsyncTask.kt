@@ -32,6 +32,8 @@ class ExportAsyncTask(private val context: Application, private val packageName:
 
     override fun doInBackground(vararg params: Void): Void? {
         val exportAllApps = packageName == AppListModel.ALL_APPS
+        val sorting = Configuration.with(context).sorting
+        val db = AppDatabase.with(context).notification()
 
         try {
             context.contentResolver.openFileDescriptor(destination, "w").use {
@@ -49,8 +51,14 @@ class ExportAsyncTask(private val context: Application, private val packageName:
 
                     while (true) {
                         val data = when (exportAllApps) {
-                            true -> AppDatabase.with(context).notification().getAllNotificationsPageSync(PAGE_SIZE, offset)
-                            false -> AppDatabase.with(context).notification().getNotificationsByAppPageSync(packageName, PAGE_SIZE, offset)
+                            true -> when (sorting) {
+                                Configuration.Sorting.OldestFirst -> db.getAllNotificationsPageSyncAsc(PAGE_SIZE, offset)
+                                Configuration.Sorting.NewestFirst -> db.getAllNotificationsPageSyncDesc(PAGE_SIZE, offset)
+                            }
+                            false -> when (sorting) {
+                                Configuration.Sorting.OldestFirst -> db.getNotificationsByAppPageSyncAsc(packageName, PAGE_SIZE, offset)
+                                Configuration.Sorting.NewestFirst -> db.getNotificationsByAppPageSyncDesc(packageName, PAGE_SIZE, offset)
+                            }
                         }
 
                         offset += data.size

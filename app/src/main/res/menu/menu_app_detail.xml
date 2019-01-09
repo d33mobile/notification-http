@@ -21,4 +21,9 @@
         android:title="@string/action_clear"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_sort"
+        android:title="@string/sorting_title"
+        app:showAsAction="never" />
+
 </menu>

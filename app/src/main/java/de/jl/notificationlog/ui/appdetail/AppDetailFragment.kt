@@ -9,11 +9,16 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.*
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.paging.PagedList
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
+import de.jl.notificationlog.data.NotificationItem
 import de.jl.notificationlog.databinding.AppDetailBinding
 import de.jl.notificationlog.ui.AppsUtil
+import de.jl.notificationlog.ui.SortSettingDialogFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ExportAsyncTask
@@ -28,6 +33,7 @@ class AppDetailFragment : Fragment() {
     companion object {
         private const val ARG_PACKAGE_NAME = "packageName"
         private const val REQUEST_CHOSE_EXPORT_PATH = 1
+        private const val REQUEST_CHANGE_SORT = 2
 
         fun newInstance(packageName: String) = AppDetailFragment().apply {
             arguments = Bundle().apply {
@@ -38,6 +44,8 @@ class AppDetailFragment : Fragment() {
 
     val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME) }
     val isLoggingEnabled = MutableLiveData<Boolean>()
+    val pagedList = MutableLiveData<LiveData<PagedList<NotificationItem>>>()
+    val pagedListContent = Transformations.switchMap(pagedList, { it })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,21 +59,33 @@ class AppDetailFragment : Fragment() {
         isLoggingEnabled.value = Configuration.with(context!!).shouldLogNotifications(selectedPackageName)
     }
 
+    fun updatePagedList() {
+        val sorting = Configuration.with(context!!).sorting
+
+        pagedList.value = LivePagedListBuilder(when {
+            selectedPackageName == AppListModel.ALL_APPS -> when(sorting) {
+                Configuration.Sorting.OldestFirst -> AppDatabase.with(context!!).notification().getNotificationsOfAllAppsAsc()
+                Configuration.Sorting.NewestFirst -> AppDatabase.with(context!!).notification().getNotificationsOfAllAppsDesc()
+            }
+            else -> when (sorting) {
+                Configuration.Sorting.OldestFirst -> AppDatabase.with(context!!).notification().getNotificationsByAppAsc(selectedPackageName)
+                Configuration.Sorting.NewestFirst -> AppDatabase.with(context!!).notification().getNotificationsByAppDesc(selectedPackageName)
+            }
+        }, 20).build()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = AppDetailBinding.inflate(inflater, container, false)
 
         val adapter = AppDetailAdapter()
 
-        LivePagedListBuilder(when {
-            selectedPackageName == AppListModel.ALL_APPS -> AppDatabase.with(context!!).notification().getNotificationsOfAllApps()
-            else -> AppDatabase.with(context!!).notification().getNotificationsByApp(selectedPackageName)
-        }, 20)
-                .build()
-                .observe(this, Observer {
-                    adapter.submitList(it)
+        updatePagedList()
 
-                    binding.isListEmpty = it != null && it.isEmpty()
-                })
+        pagedListContent.observe(this, Observer {
+            adapter.submitList(it)
+
+            binding.isListEmpty = it != null && it.isEmpty()
+        })
 
         isLoggingEnabled.observe(this, Observer {
             binding.loggingDisabled = selectedPackageName != AppListModel.ALL_APPS && !it
@@ -115,6 +135,13 @@ class AppDetailFragment : Fragment() {
 
             true
         }
+        item.itemId == R.id.action_sort -> {
+            SortSettingDialogFragment().apply {
+                setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_SORT)
+            }.show(fragmentManager!!)
+
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -135,6 +162,9 @@ class AppDetailFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK) {
                     ExportAsyncTask(activity!!.application, selectedPackageName, data!!.data!!).execute()
                 }
+            }
+            REQUEST_CHANGE_SORT -> {
+                updatePagedList()
             }
             else -> super.onActivityResult(requestCode, resultCode, data)
         }

@@ -53,4 +53,9 @@
     <string name="settings_radio_blacklist">Log all Apps except the selected ones</string>
     <string name="settings_radio_whitelist">Log only the following Apps</string>
     <string name="settings_search_hint">Search Apps</string>
+
+    <!-- sorting -->
+    <string name="sorting_title">Sort</string>
+    <string name="sort_oldest_first">Oldest first</string>
+    <string name="sort_newest_first">Newest first</string>
 </resources>

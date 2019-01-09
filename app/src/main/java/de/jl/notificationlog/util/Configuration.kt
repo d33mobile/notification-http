@@ -8,6 +8,9 @@ class Configuration(context: Application) {
     companion object {
         private const val IS_WHITELIST_MODE = "whitelist_mode"
         private const val INVERTED_APPS_PACKAGE_NAMES = "inverted_app_package_names"
+        private const val SORTING = "sorting"
+        private const val SORT_NEWEST_FIRST = "newest_first"
+        private const val SORT_OLDEST_FIRST = "oldest_first"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -57,5 +60,25 @@ class Configuration(context: Application) {
                         }
                 )
                 .apply()
+    }
+
+    var sorting: Sorting
+        get() = when (preferences.getString(SORTING, SORT_OLDEST_FIRST)) {
+            SORT_OLDEST_FIRST -> Sorting.OldestFirst
+            SORT_NEWEST_FIRST -> Sorting.NewestFirst
+            else -> throw IllegalArgumentException()
+        }
+        set(value) {
+            preferences.edit()
+                    .putString(SORTING, when (value) {
+                        Sorting.OldestFirst -> SORT_OLDEST_FIRST
+                        Sorting.NewestFirst -> SORT_NEWEST_FIRST
+                    })
+                    .apply()
+        }
+
+    enum class Sorting {
+        NewestFirst,
+        OldestFirst
     }
 }

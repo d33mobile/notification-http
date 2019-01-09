@@ -12,16 +12,28 @@ interface NotificationDao {
     fun insertSync(notificationItem: NotificationItem)
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time ASC")
-    fun getNotificationsByApp(packageName: String): DataSource.Factory<Int, NotificationItem>
+    fun getNotificationsByAppAsc(packageName: String): DataSource.Factory<Int, NotificationItem>
 
     @Query("SELECT * FROM notifications ORDER BY time ASC")
-    fun getNotificationsOfAllApps(): DataSource.Factory<Int, NotificationItem>
+    fun getNotificationsOfAllAppsAsc(): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time DESC")
+    fun getNotificationsByAppDesc(packageName: String): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications ORDER BY time DESC")
+    fun getNotificationsOfAllAppsDesc(): DataSource.Factory<Int, NotificationItem>
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time ASC LIMIT :rows OFFSET :offset")
-    fun getNotificationsByAppPageSync(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+    fun getNotificationsByAppPageSyncAsc(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    fun getNotificationsByAppPageSyncDesc(packageName: String, rows: Int, offset: Int): List<NotificationItem>
 
     @Query("SELECT * FROM notifications ORDER BY time ASC LIMIT :rows OFFSET :offset")
-    fun getAllNotificationsPageSync(rows: Int, offset: Int): List<NotificationItem>
+    fun getAllNotificationsPageSyncAsc(rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    fun getAllNotificationsPageSyncDesc(rows: Int, offset: Int): List<NotificationItem>
 
     @Query("SELECT DISTINCT package FROM notifications ORDER BY package ASC")
     fun getAppsWithNotifications(): LiveData<List<AppWithNotification>>
