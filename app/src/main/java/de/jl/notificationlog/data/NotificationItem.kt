@@ -4,8 +4,21 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.annotation.NonNull
+import androidx.room.Index
 
-@Entity(tableName = "notifications")
+@Entity(
+        tableName = "notifications",
+        indices = [
+            Index(
+                    name = "notifications_index_time",
+                    value = ["time"]
+            ),
+            Index(
+                    name = "notifications_index_app_and_time",
+                    value = ["package", "time"]
+            )
+        ]
+)
 data class NotificationItem(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "id")

@@ -7,7 +7,7 @@ import androidx.room.migration.Migration
 import android.content.Context
 
 @androidx.room.Database(
-        version = 2,
+        version = 3,
         entities = [
             NotificationItem::class
         ]
@@ -37,6 +37,13 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         // replace the old table by the new one
                                         database.execSQL("DROP TABLE notifications")
                                         database.execSQL("ALTER TABLE notifications_new RENAME TO notifications")
+                                    }
+                                },
+                                object : Migration(2, 3) {
+                                    override fun migrate(database: SupportSQLiteDatabase) {
+                                        // add indexes
+                                        database.execSQL("CREATE  INDEX `notifications_index_time` ON `notifications` (`time`)")
+                                        database.execSQL("CREATE  INDEX `notifications_index_app_and_time` ON `notifications` (`package`, `time`)")
                                     }
                                 }
                         ).build()
