@@ -19,6 +19,7 @@ import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.AppDetailBinding
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.SortSettingDialogFragment
+import de.jl.notificationlog.ui.VersionHandlingSettingDialogFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ExportAsyncTask
@@ -33,7 +34,7 @@ class AppDetailFragment : Fragment() {
     companion object {
         private const val ARG_PACKAGE_NAME = "packageName"
         private const val REQUEST_CHOSE_EXPORT_PATH = 1
-        private const val REQUEST_CHANGE_SORT = 2
+        private const val REQUEST_CHANGE_CONFIG = 2
 
         fun newInstance(packageName: String) = AppDetailFragment().apply {
             arguments = Bundle().apply {
@@ -132,7 +133,14 @@ class AppDetailFragment : Fragment() {
         }
         item.itemId == R.id.action_sort -> {
             SortSettingDialogFragment().apply {
-                setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_SORT)
+                setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_CONFIG)
+            }.show(fragmentManager!!)
+
+            true
+        }
+        item.itemId == R.id.action_version -> {
+            VersionHandlingSettingDialogFragment().apply {
+                setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_CONFIG)
             }.show(fragmentManager!!)
 
             true
@@ -158,7 +166,7 @@ class AppDetailFragment : Fragment() {
                     ExportAsyncTask(activity!!.application, selectedPackageName, data!!.data!!).execute()
                 }
             }
-            REQUEST_CHANGE_SORT -> {
+            REQUEST_CHANGE_CONFIG -> {
                 updatePagedList()
             }
             else -> super.onActivityResult(requestCode, resultCode, data)

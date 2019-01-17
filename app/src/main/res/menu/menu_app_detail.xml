@@ -26,4 +26,9 @@
         android:title="@string/sorting_title"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_version"
+        android:title="@string/version_handling_title"
+        app:showAsAction="never" />
+
 </menu>

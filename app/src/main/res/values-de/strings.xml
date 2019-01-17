@@ -55,4 +55,9 @@
     <string name="sorting_title">Sortierung</string>
     <string name="sort_oldest_first">ältestes zuerst</string>
     <string name="sort_newest_first">neustes zuerst</string>
+
+    <string name="version_handling_title">Benachrichtigungsupdates</string>
+    <string name="version_handling_all">alle Versionen anzeigen</string>
+    <string name="version_handling_oldest">älteste Version anzeigen</string>
+    <string name="version_handling_newest">neuste Version anzeigen</string>
 </resources>

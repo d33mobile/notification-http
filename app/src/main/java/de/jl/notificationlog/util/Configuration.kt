@@ -11,6 +11,10 @@ class Configuration(context: Application) {
         private const val SORTING = "sorting"
         private const val SORT_NEWEST_FIRST = "newest_first"
         private const val SORT_OLDEST_FIRST = "oldest_first"
+        private const val VERSION_HANDLING = "version_handling"
+        private const val VERSION_ALL = "all"
+        private const val VERSION_OLDEST = "oldest"
+        private const val VERSION_NEWEST = "newest"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -77,7 +81,22 @@ class Configuration(context: Application) {
                     .apply()
         }
 
-    val versionHandling = VersionHandling.ShowAllVersions
+    var versionHandling: VersionHandling
+        get() = when (preferences.getString(VERSION_HANDLING, VERSION_ALL)) {
+            VERSION_ALL -> VersionHandling.ShowAllVersions
+            VERSION_OLDEST -> VersionHandling.ShowOldestVersionOnly
+            VERSION_NEWEST -> VersionHandling.ShowNewestVersionOnly
+            else -> throw IllegalArgumentException()
+        }
+        set(value) {
+            preferences.edit()
+                    .putString(VERSION_HANDLING, when (value) {
+                        VersionHandling.ShowAllVersions -> VERSION_ALL
+                        VersionHandling.ShowOldestVersionOnly -> VERSION_OLDEST
+                        VersionHandling.ShowNewestVersionOnly -> VERSION_NEWEST
+                    })
+                    .apply()
+        }
 
     enum class Sorting {
         NewestFirst,
