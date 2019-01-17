@@ -8,6 +8,10 @@ import androidx.room.*
             Index(
                     name = "active_notifications_query_index",
                     value = ["app_package_name", "system_id", "system_tag"]
+            ),
+            Index(
+                    name = "active_notification_previous_notification_item_index",
+                    value = ["previous_notification_item_id"]
             )
         ],
         foreignKeys = [

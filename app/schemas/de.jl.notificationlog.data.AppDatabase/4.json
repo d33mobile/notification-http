@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "69b15df0b2625fe0cf1386ae3893515a",
+    "identityHash": "55b2eb8ec21b2f23a139e7d3b49ff2f7",
     "entities": [
       {
         "tableName": "notifications",
@@ -74,6 +74,44 @@
               "time"
             ],
             "createSql": "CREATE  INDEX `notifications_index_app_and_time` ON `${TABLE_NAME}` (`package`, `time`)"
+          },
+          {
+            "name": "notifications_oldest_index_time",
+            "unique": false,
+            "columnNames": [
+              "is_oldest_version",
+              "time"
+            ],
+            "createSql": "CREATE  INDEX `notifications_oldest_index_time` ON `${TABLE_NAME}` (`is_oldest_version`, `time`)"
+          },
+          {
+            "name": "notifications_oldest_index_app_and_time",
+            "unique": false,
+            "columnNames": [
+              "is_oldest_version",
+              "package",
+              "time"
+            ],
+            "createSql": "CREATE  INDEX `notifications_oldest_index_app_and_time` ON `${TABLE_NAME}` (`is_oldest_version`, `package`, `time`)"
+          },
+          {
+            "name": "notifications_newest_index_time",
+            "unique": false,
+            "columnNames": [
+              "is_newest_version",
+              "time"
+            ],
+            "createSql": "CREATE  INDEX `notifications_newest_index_time` ON `${TABLE_NAME}` (`is_newest_version`, `time`)"
+          },
+          {
+            "name": "notifications_newest_index_app_and_time",
+            "unique": false,
+            "columnNames": [
+              "is_newest_version",
+              "package",
+              "time"
+            ],
+            "createSql": "CREATE  INDEX `notifications_newest_index_app_and_time` ON `${TABLE_NAME}` (`is_newest_version`, `package`, `time`)"
           }
         ],
         "foreignKeys": []
@@ -129,6 +167,14 @@
               "system_tag"
             ],
             "createSql": "CREATE  INDEX `active_notifications_query_index` ON `${TABLE_NAME}` (`app_package_name`, `system_id`, `system_tag`)"
+          },
+          {
+            "name": "active_notification_previous_notification_item_index",
+            "unique": false,
+            "columnNames": [
+              "previous_notification_item_id"
+            ],
+            "createSql": "CREATE  INDEX `active_notification_previous_notification_item_index` ON `${TABLE_NAME}` (`previous_notification_item_id`)"
           }
         ],
         "foreignKeys": [
@@ -149,7 +195,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"69b15df0b2625fe0cf1386ae3893515a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"55b2eb8ec21b2f23a139e7d3b49ff2f7\")"
     ]
   }
 }

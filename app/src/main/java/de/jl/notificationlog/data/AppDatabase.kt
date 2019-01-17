@@ -60,6 +60,12 @@ abstract class AppDatabase: RoomDatabase(), Database {
 
                                         // add new indexes
                                         database.execSQL("CREATE  INDEX `active_notifications_query_index` ON `active_notifications` (`app_package_name`, `system_id`, `system_tag`)")
+                                        database.execSQL("CREATE  INDEX `active_notification_previous_notification_item_index` ON `app_package_name` (`previous_notification_item_id`)")
+
+                                        database.execSQL("CREATE  INDEX `notifications_oldest_index_time` ON `notifications` (`is_oldest_version`, `time`)")
+                                        database.execSQL("CREATE  INDEX `notifications_oldest_index_app_and_time` ON `notifications` (`is_oldest_version`, `package`, `time`)")
+                                        database.execSQL("CREATE  INDEX `notifications_newest_index_time` ON `notifications` (`is_newest_version`, `time`)")
+                                        database.execSQL("CREATE  INDEX `notifications_newest_index_app_and_time` ON `notifications` (`is_newest_version`, `package`, `time`)")
                                     }
                                 }
                         ).build()

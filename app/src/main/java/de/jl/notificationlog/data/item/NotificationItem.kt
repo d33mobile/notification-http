@@ -16,6 +16,22 @@ import androidx.room.Index
             Index(
                     name = "notifications_index_app_and_time",
                     value = ["package", "time"]
+            ),
+            Index(
+                    name = "notifications_oldest_index_time",
+                    value = ["is_oldest_version", "time"]
+            ),
+            Index(
+                    name = "notifications_oldest_index_app_and_time",
+                    value = ["is_oldest_version", "package", "time"]
+            ),
+            Index(
+                    name = "notifications_newest_index_time",
+                    value = ["is_newest_version", "time"]
+            ),
+            Index(
+                    name = "notifications_newest_index_app_and_time",
+                    value = ["is_newest_version", "package", "time"]
             )
         ]
 )
