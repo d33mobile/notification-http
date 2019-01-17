@@ -34,10 +34,16 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
                     item.time,
                     DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
             )
+            holder.binding.progress = item.progress
+            holder.binding.maxProgress = item.progressMax
+            holder.binding.indeterminate = item.progressIndeterminate
         } else {
             holder.binding.title = ""
             holder.binding.text = ""
             holder.binding.time = ""
+            holder.binding.progress = 0
+            holder.binding.maxProgress = 0
+            holder.binding.indeterminate = false
         }
 
         holder.binding.executePendingBindings()

@@ -9,7 +9,7 @@ import de.jl.notificationlog.data.item.ActiveNotificationItem
 import de.jl.notificationlog.data.item.NotificationItem
 
 @androidx.room.Database(
-        version = 4,
+        version = 5,
         entities = [
             NotificationItem::class,
             ActiveNotificationItem::class
@@ -66,6 +66,14 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         database.execSQL("CREATE  INDEX `notifications_oldest_index_app_and_time` ON `notifications` (`is_oldest_version`, `package`, `time`)")
                                         database.execSQL("CREATE  INDEX `notifications_newest_index_time` ON `notifications` (`is_newest_version`, `time`)")
                                         database.execSQL("CREATE  INDEX `notifications_newest_index_app_and_time` ON `notifications` (`is_newest_version`, `package`, `time`)")
+                                    }
+                                },
+                                object: Migration(4, 5) {
+                                    override fun migrate(database: SupportSQLiteDatabase) {
+                                        // add new columns
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `progress` INTEGER NOT NULL DEFAULT 0")
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `progress_max` INTEGER NOT NULL DEFAULT 0")
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `progress_indeterminate` INTEGER NOT NULL DEFAULT 0")
                                     }
                                 }
                         ).build()

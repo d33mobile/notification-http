@@ -15,6 +15,20 @@
         <variable
             name="time"
             type="String" />
+
+        <variable
+            name="progress"
+            type="int" />
+
+        <variable
+            name="maxProgress"
+            type="int" />
+
+        <variable
+            name="indeterminate"
+            type="boolean" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -45,6 +59,16 @@
                 android:textAppearance="?android:textAppearanceSmall"
                 android:text="@{time}"
                 tools:text="a few hours ago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:visibility="@{maxProgress == 0 ? View.GONE : View.VISIBLE}"
+                android:progress="@{progress}"
+                android:max="@{maxProgress}"
+                android:indeterminate="@{indeterminate}"
+                tools:progress="30"
+                style="?android:progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

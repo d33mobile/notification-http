@@ -14,17 +14,23 @@ import java.util.*
 
 
 object NotificationParser {
-    private val LOG_TAG = "NotificationParser"
+    private const val LOG_TAG = "NotificationParser"
 
     fun parse(notification: Notification, context: Context): NotificationData {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             val extras = notification.extras
-            val title = extras.getString("android.title")?.toString()
-            val text = extras.getCharSequence("android.text")?.toString()
+            val title = extras.getString(Notification.EXTRA_TITLE)?.toString()
+            val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
+            val progress = extras.getInt(Notification.EXTRA_PROGRESS)
+            val progressMax = extras.getInt(Notification.EXTRA_PROGRESS_MAX)
+            val progressIndeterminate = extras.getBoolean(Notification.EXTRA_PROGRESS_INDETERMINATE)
 
             return NotificationData(
                     title = title ?: "",
-                    text = text ?: ""
+                    text = text ?: "",
+                    progress = progress,
+                    progressMax = progressMax,
+                    progressIndeterminate = progressIndeterminate
             )
         } else {
             return parseOld(notification, context)
@@ -38,7 +44,13 @@ object NotificationParser {
         val title = strings.get(notificationIdDetector.titleId, "")
         val text = strings.get(notificationIdDetector.textId, "")
 
-        return NotificationData(title, text)
+        return NotificationData(
+                title = title,
+                text = text,
+                progress = 0,
+                progressIndeterminate = false,
+                progressMax = 0
+        )
     }
 
     // key = id; value = text

@@ -32,6 +32,9 @@ object NotificationSaveUtil {
                             time = System.currentTimeMillis(),
                             title = item.title,
                             text = item.text,
+                            progress = item.progress,
+                            progressMax = item.progressMax,
+                            progressIndeterminate = item.progressIndeterminate,
                             isOldestVersion = true,
                             isNewestVersion = true
                     )
@@ -66,6 +69,9 @@ object NotificationSaveUtil {
                                     time = System.currentTimeMillis(),
                                     title = item.title,
                                     text = item.text,
+                                    progress = item.progress,
+                                    progressMax = item.progressMax,
+                                    progressIndeterminate = item.progressIndeterminate,
                                     isOldestVersion = true,
                                     isNewestVersion = true
                             )
@@ -98,6 +104,9 @@ object NotificationSaveUtil {
                                     time = System.currentTimeMillis(),
                                     title = item.title,
                                     text = item.text,
+                                    progress = item.progress,
+                                    progressMax = item.progressMax,
+                                    progressIndeterminate = item.progressIndeterminate,
                                     isOldestVersion = false,
                                     isNewestVersion = true
                             )

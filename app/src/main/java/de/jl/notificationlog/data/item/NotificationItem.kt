@@ -51,6 +51,12 @@ data class NotificationItem(
         @NonNull
         @ColumnInfo(name = "text")
         val text: String,
+        @ColumnInfo(name = "progress")
+        val progress: Int,
+        @ColumnInfo(name = "progress_max")
+        val progressMax: Int,
+        @ColumnInfo(name = "progress_indeterminate")
+        val progressIndeterminate: Boolean,
         @ColumnInfo(name = "is_oldest_version")
         val isOldestVersion: Boolean,
         @ColumnInfo(name = "is_newest_version")
