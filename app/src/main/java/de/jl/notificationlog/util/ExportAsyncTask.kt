@@ -33,6 +33,7 @@ class ExportAsyncTask(private val context: Application, private val packageName:
     override fun doInBackground(vararg params: Void): Void? {
         val exportAllApps = packageName == AppListModel.ALL_APPS
         val sorting = Configuration.with(context).sorting
+        val versionHandling = Configuration.with(context).versionHandling
         val db = AppDatabase.with(context).notification()
 
         try {
@@ -51,8 +52,8 @@ class ExportAsyncTask(private val context: Application, private val packageName:
 
                     while (true) {
                         val data = when (exportAllApps) {
-                            true -> db.getAllNotificationsPageSync(PAGE_SIZE, offset, sorting)
-                            false -> db.getNotificationsByAppPageSync(packageName, PAGE_SIZE, offset, sorting)
+                            true -> db.getAllNotificationsPageSync(PAGE_SIZE, offset, sorting, versionHandling)
+                            false -> db.getNotificationsByAppPageSync(packageName, PAGE_SIZE, offset, sorting, versionHandling)
                         }
 
                         offset += data.size

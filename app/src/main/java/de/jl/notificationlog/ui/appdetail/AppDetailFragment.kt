@@ -61,10 +61,11 @@ class AppDetailFragment : Fragment() {
 
     fun updatePagedList() {
         val sorting = Configuration.with(context!!).sorting
+        val versionHandling = Configuration.with(context!!).versionHandling
 
         pagedList.value = LivePagedListBuilder(when {
-            selectedPackageName == AppListModel.ALL_APPS -> AppDatabase.with(context!!).notification().getNotificationsOfAllApps(sorting)
-            else -> AppDatabase.with(context!!).notification().getNotificationsByApp(selectedPackageName, sorting)
+            selectedPackageName == AppListModel.ALL_APPS -> AppDatabase.with(context!!).notification().getNotificationsOfAllApps(sorting, versionHandling)
+            else -> AppDatabase.with(context!!).notification().getNotificationsByApp(selectedPackageName, sorting, versionHandling)
         }, 20).build()
     }
 

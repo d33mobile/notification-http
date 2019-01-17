@@ -77,8 +77,16 @@ class Configuration(context: Application) {
                     .apply()
         }
 
+    val versionHandling = VersionHandling.ShowAllVersions
+
     enum class Sorting {
         NewestFirst,
         OldestFirst
+    }
+
+    enum class VersionHandling {
+        ShowAllVersions,
+        ShowNewestVersionOnly,
+        ShowOldestVersionOnly
     }
 }

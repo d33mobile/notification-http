@@ -17,49 +17,137 @@ abstract class NotificationDao {
     @Query("UPDATE NOTIFICATIONS SET is_newest_version = :isNewestNotification WHERE id = :id")
     abstract fun setIsNewestNotificationSync(id: Long, isNewestNotification: Boolean): Long
 
-    fun getNotificationsByApp(packageName: String, sorting: Configuration.Sorting) = when (sorting) {
-        Configuration.Sorting.OldestFirst -> getNotificationsByAppAsc(packageName)
-        Configuration.Sorting.NewestFirst -> getNotificationsByAppDesc(packageName)
+    fun getNotificationsByApp(packageName: String, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = when (versionHandling) {
+        Configuration.VersionHandling.ShowAllVersions -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppAscAllVersions(packageName)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppDescAllVersions(packageName)
+        }
+        Configuration.VersionHandling.ShowOldestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppAscOldestVersion(packageName)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppDescOldestVersion(packageName)
+        }
+        Configuration.VersionHandling.ShowNewestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppAscNewestVersion(packageName)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppDescNewestVersion(packageName)
+        }
     }
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time ASC")
-    protected abstract fun getNotificationsByAppAsc(packageName: String): DataSource.Factory<Int, NotificationItem>
+    protected abstract fun getNotificationsByAppAscAllVersions(packageName: String): DataSource.Factory<Int, NotificationItem>
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time DESC")
-    protected abstract fun getNotificationsByAppDesc(packageName: String): DataSource.Factory<Int, NotificationItem>
+    protected abstract fun getNotificationsByAppDescAllVersions(packageName: String): DataSource.Factory<Int, NotificationItem>
 
-    fun getNotificationsOfAllApps(sorting: Configuration.Sorting) = when (sorting) {
-        Configuration.Sorting.OldestFirst -> getNotificationsOfAllAppsAsc()
-        Configuration.Sorting.NewestFirst -> getNotificationsOfAllAppsDesc()
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_newest_version = 1 ORDER BY time ASC")
+    protected abstract fun getNotificationsByAppAscNewestVersion(packageName: String): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_newest_version = 1 ORDER BY time DESC")
+    protected abstract fun getNotificationsByAppDescNewestVersion(packageName: String): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_oldest_version = 1 ORDER BY time ASC")
+    protected abstract fun getNotificationsByAppAscOldestVersion(packageName: String): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_oldest_version = 1 ORDER BY time DESC")
+    protected abstract fun getNotificationsByAppDescOldestVersion(packageName: String): DataSource.Factory<Int, NotificationItem>
+
+    fun getNotificationsOfAllApps(sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = when(versionHandling) {
+        Configuration.VersionHandling.ShowAllVersions -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsOfAllAppsAscAllVersions()
+            Configuration.Sorting.NewestFirst -> getNotificationsOfAllAppsDescAllVersions()
+        }
+        Configuration.VersionHandling.ShowOldestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsOfAllAppsAscOldestVersions()
+            Configuration.Sorting.NewestFirst -> getNotificationsOfAllAppsDescOldestVersions()
+        }
+        Configuration.VersionHandling.ShowNewestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsOfAllAppsAscNewestVersions()
+            Configuration.Sorting.NewestFirst -> getNotificationsOfAllAppsDescNewestVersions()
+        }
     }
 
     @Query("SELECT * FROM notifications ORDER BY time ASC")
-    protected abstract fun getNotificationsOfAllAppsAsc(): DataSource.Factory<Int, NotificationItem>
+    protected abstract fun getNotificationsOfAllAppsAscAllVersions(): DataSource.Factory<Int, NotificationItem>
 
     @Query("SELECT * FROM notifications ORDER BY time DESC")
-    protected abstract fun getNotificationsOfAllAppsDesc(): DataSource.Factory<Int, NotificationItem>
+    protected abstract fun getNotificationsOfAllAppsDescAllVersions(): DataSource.Factory<Int, NotificationItem>
 
-    fun getNotificationsByAppPageSync(packageName: String, rows: Int, offset: Int, sorting: Configuration.Sorting) = when (sorting) {
-        Configuration.Sorting.OldestFirst -> getNotificationsByAppPageSyncAsc(packageName, rows, offset)
-        Configuration.Sorting.NewestFirst -> getNotificationsByAppPageSyncDesc(packageName, rows, offset)
+    @Query("SELECT * FROM notifications WHERE is_oldest_version = 1 ORDER BY time ASC")
+    protected abstract fun getNotificationsOfAllAppsAscOldestVersions(): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_oldest_version = 1 ORDER BY time DESC")
+    protected abstract fun getNotificationsOfAllAppsDescOldestVersions(): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_newest_version = 1 ORDER BY time ASC")
+    protected abstract fun getNotificationsOfAllAppsAscNewestVersions(): DataSource.Factory<Int, NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_newest_version = 1 ORDER BY time DESC")
+    protected abstract fun getNotificationsOfAllAppsDescNewestVersions(): DataSource.Factory<Int, NotificationItem>
+
+    fun getNotificationsByAppPageSync(packageName: String, rows: Int, offset: Int, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = when (versionHandling) {
+        Configuration.VersionHandling.ShowAllVersions -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppPageSyncAscAllVersions(packageName, rows, offset)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppPageSyncDescAllVersions(packageName, rows, offset)
+        }
+        Configuration.VersionHandling.ShowOldestVersionOnly-> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppPageSyncAscOldestVersion(packageName, rows, offset)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppPageSyncDescOldestVersion(packageName, rows, offset)
+        }
+        Configuration.VersionHandling.ShowNewestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getNotificationsByAppPageSyncAscNewestVersion(packageName, rows, offset)
+            Configuration.Sorting.NewestFirst -> getNotificationsByAppPageSyncDescNewestVersion(packageName, rows, offset)
+        }
     }
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time ASC LIMIT :rows OFFSET :offset")
-    protected abstract fun getNotificationsByAppPageSyncAsc(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+    protected abstract fun getNotificationsByAppPageSyncAscAllVersions(packageName: String, rows: Int, offset: Int): List<NotificationItem>
 
     @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time DESC LIMIT :rows OFFSET :offset")
-    protected abstract fun getNotificationsByAppPageSyncDesc(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+    protected abstract fun getNotificationsByAppPageSyncDescAllVersions(packageName: String, rows: Int, offset: Int): List<NotificationItem>
 
-    fun getAllNotificationsPageSync(rows: Int, offset: Int, sorting: Configuration.Sorting) = when (sorting) {
-        Configuration.Sorting.OldestFirst -> getAllNotificationsPageSyncAsc(rows, offset)
-        Configuration.Sorting.NewestFirst -> getAllNotificationsPageSyncDesc(rows, offset)
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_oldest_version = 1 ORDER BY time ASC LIMIT :rows OFFSET :offset")
+    protected abstract fun getNotificationsByAppPageSyncAscOldestVersion(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_oldest_version = 1 ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    protected abstract fun getNotificationsByAppPageSyncDescOldestVersion(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_newest_version = 1 ORDER BY time ASC LIMIT :rows OFFSET :offset")
+    protected abstract fun getNotificationsByAppPageSyncAscNewestVersion(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName AND is_newest_version = 1 ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    protected abstract fun getNotificationsByAppPageSyncDescNewestVersion(packageName: String, rows: Int, offset: Int): List<NotificationItem>
+
+    fun getAllNotificationsPageSync(rows: Int, offset: Int, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = when (versionHandling) {
+        Configuration.VersionHandling.ShowAllVersions -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getAllNotificationsPageSyncAscAllVersions(rows, offset)
+            Configuration.Sorting.NewestFirst -> getAllNotificationsPageSyncDescAllVersions(rows, offset)
+        }
+        Configuration.VersionHandling.ShowOldestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getAllNotificationsPageSyncAscOldestVersion(rows, offset)
+            Configuration.Sorting.NewestFirst -> getAllNotificationsPageSyncDescOldestVersion(rows, offset)
+        }
+        Configuration.VersionHandling.ShowNewestVersionOnly -> when (sorting) {
+            Configuration.Sorting.OldestFirst -> getAllNotificationsPageSyncAscNewestVersion(rows, offset)
+            Configuration.Sorting.NewestFirst -> getAllNotificationsPageSyncDescNewestVersion(rows, offset)
+        }
     }
 
     @Query("SELECT * FROM notifications ORDER BY time ASC LIMIT :rows OFFSET :offset")
-    protected abstract fun getAllNotificationsPageSyncAsc(rows: Int, offset: Int): List<NotificationItem>
+    protected abstract fun getAllNotificationsPageSyncAscAllVersions(rows: Int, offset: Int): List<NotificationItem>
 
     @Query("SELECT * FROM notifications ORDER BY time DESC LIMIT :rows OFFSET :offset")
-    protected abstract fun getAllNotificationsPageSyncDesc(rows: Int, offset: Int): List<NotificationItem>
+    protected abstract fun getAllNotificationsPageSyncDescAllVersions(rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_oldest_version = 1 ORDER BY time ASC LIMIT :rows OFFSET :offset")
+    protected abstract fun getAllNotificationsPageSyncAscOldestVersion(rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_oldest_version = 1 ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    protected abstract fun getAllNotificationsPageSyncDescOldestVersion(rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_newest_version = 1 ORDER BY time ASC LIMIT :rows OFFSET :offset")
+    protected abstract fun getAllNotificationsPageSyncAscNewestVersion(rows: Int, offset: Int): List<NotificationItem>
+
+    @Query("SELECT * FROM notifications WHERE is_newest_version = 1 ORDER BY time DESC LIMIT :rows OFFSET :offset")
+    protected abstract fun getAllNotificationsPageSyncDescNewestVersion(rows: Int, offset: Int): List<NotificationItem>
 
     @Query("SELECT DISTINCT package FROM notifications ORDER BY package ASC")
     abstract fun getAppsWithNotifications(): LiveData<List<AppWithNotification>>
