@@ -1,4 +1,4 @@
-package de.jl.notificationlog.data
+package de.jl.notificationlog.data.item
 
 import androidx.room.ColumnInfo
 

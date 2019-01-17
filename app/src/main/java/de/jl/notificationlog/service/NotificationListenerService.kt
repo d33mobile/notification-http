@@ -17,12 +17,14 @@ class NotificationListenerService : android.service.notification.NotificationLis
             Log.d(LOG_TAG, "onNotificationPosted")
         }
 
-        NotificationSaveUtil.save(sbn.notification, sbn.packageName, this)
+        NotificationSaveUtil.saveNotificationPosted(sbn, this)
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         if (BuildConfig.DEBUG) {
             Log.d(LOG_TAG, "onNotificationRemoved")
         }
+
+        NotificationSaveUtil.saveNotificationRemoved(sbn, this)
     }
 }

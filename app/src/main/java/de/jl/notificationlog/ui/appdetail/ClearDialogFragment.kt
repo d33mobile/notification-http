@@ -40,7 +40,7 @@ class ClearDialogFragment : DialogFragment() {
 
                     Thread {
                         if (packageName == AppListModel.ALL_APPS) {
-                            database.notification().deleteAllNotificationsSync()
+                            database.clearAllTables()
                         } else {
                             database.notification().deleteNotificationsByAppSync(packageName)
                         }

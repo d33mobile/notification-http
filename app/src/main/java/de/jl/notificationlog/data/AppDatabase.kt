@@ -5,19 +5,22 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import android.content.Context
+import de.jl.notificationlog.data.item.ActiveNotificationItem
+import de.jl.notificationlog.data.item.NotificationItem
 
 @androidx.room.Database(
-        version = 3,
+        version = 4,
         entities = [
-            NotificationItem::class
+            NotificationItem::class,
+            ActiveNotificationItem::class
         ]
 )
 abstract class AppDatabase: RoomDatabase(), Database {
     companion object {
         private val lock = Object()
-        private var instance: Database? = null
+        private var instance: AppDatabase? = null
 
-        fun with(context: Context): Database {
+        fun with(context: Context): AppDatabase {
             if (instance == null) {
                 synchronized(lock) {
                     if (instance == null) {
@@ -44,6 +47,19 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         // add indexes
                                         database.execSQL("CREATE  INDEX `notifications_index_time` ON `notifications` (`time`)")
                                         database.execSQL("CREATE  INDEX `notifications_index_app_and_time` ON `notifications` (`package`, `time`)")
+                                    }
+                                },
+                                object: Migration(3, 4) {
+                                    override fun migrate(database: SupportSQLiteDatabase) {
+                                        // add new columns
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `is_oldest_version` INTEGER NOT NULL DEFAULT 1")
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `is_newest_version` INTEGER NOT NULL DEFAULT 1")
+
+                                        // add new table
+                                        database.execSQL("CREATE TABLE IF NOT EXISTS `active_notifications` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `app_package_name` TEXT NOT NULL, `system_id` INTEGER NOT NULL, `system_tag` TEXT, `previous_notification_item_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`previous_notification_item_id`) REFERENCES `notifications`(`id`) ON UPDATE CASCADE ON DELETE CASCADE)")
+
+                                        // add new indexes
+                                        database.execSQL("CREATE  INDEX `active_notifications_query_index` ON `active_notifications` (`app_package_name`, `system_id`, `system_tag`)")
                                     }
                                 }
                         ).build()

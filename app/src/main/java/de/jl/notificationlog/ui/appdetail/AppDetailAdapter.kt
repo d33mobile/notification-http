@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import de.jl.notificationlog.data.NotificationItem
+import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.NotificationItemBinding
 
 class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(

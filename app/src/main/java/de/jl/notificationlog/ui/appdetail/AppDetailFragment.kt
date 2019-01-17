@@ -15,7 +15,7 @@ import androidx.lifecycle.Transformations
 import androidx.paging.PagedList
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
-import de.jl.notificationlog.data.NotificationItem
+import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.AppDetailBinding
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.SortSettingDialogFragment

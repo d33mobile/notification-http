@@ -1,4 +1,4 @@
-package de.jl.notificationlog.data
+package de.jl.notificationlog.data.item
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -34,5 +34,9 @@ data class NotificationItem(
         val title: String,
         @NonNull
         @ColumnInfo(name = "text")
-        val text: String
+        val text: String,
+        @ColumnInfo(name = "is_oldest_version")
+        val isOldestVersion: Boolean,
+        @ColumnInfo(name = "is_newest_version")
+        val isNewestVersion: Boolean
 )
