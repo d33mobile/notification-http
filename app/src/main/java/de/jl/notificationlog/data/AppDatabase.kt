@@ -59,8 +59,8 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         database.execSQL("CREATE TABLE IF NOT EXISTS `active_notifications` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `app_package_name` TEXT NOT NULL, `system_id` INTEGER NOT NULL, `system_tag` TEXT NOT NULL, `previous_notification_item_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`previous_notification_item_id`) REFERENCES `notifications`(`id`) ON UPDATE CASCADE ON DELETE CASCADE)")
 
                                         // add new indexes
-                                        database.execSQL("CREATE  INDEX `active_notifications_query_index` ON `active_notifications` (`app_package_name`, `system_id`, `system_tag`)")
-                                        database.execSQL("CREATE  INDEX `active_notification_previous_notification_item_index` ON `app_package_name` (`previous_notification_item_id`)")
+                                        database.execSQL("CREATE UNIQUE INDEX `active_notifications_query_index` ON `active_notifications` (`app_package_name`, `system_id`, `system_tag`)")
+                                        database.execSQL("CREATE UNIQUE INDEX `active_notification_previous_notification_item_index` ON `app_package_name` (`previous_notification_item_id`)")
 
                                         database.execSQL("CREATE  INDEX `notifications_oldest_index_time` ON `notifications` (`is_oldest_version`, `time`)")
                                         database.execSQL("CREATE  INDEX `notifications_oldest_index_app_and_time` ON `notifications` (`is_oldest_version`, `package`, `time`)")

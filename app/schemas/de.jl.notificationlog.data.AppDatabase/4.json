@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "2dea7387847fd91e12a99ef2ce9cda73",
+    "identityHash": "3634918199a40a3b8e7447976c8ec76f",
     "entities": [
       {
         "tableName": "notifications",
@@ -160,21 +160,21 @@
         "indices": [
           {
             "name": "active_notifications_query_index",
-            "unique": false,
+            "unique": true,
             "columnNames": [
               "app_package_name",
               "system_id",
               "system_tag"
             ],
-            "createSql": "CREATE  INDEX `active_notifications_query_index` ON `${TABLE_NAME}` (`app_package_name`, `system_id`, `system_tag`)"
+            "createSql": "CREATE UNIQUE INDEX `active_notifications_query_index` ON `${TABLE_NAME}` (`app_package_name`, `system_id`, `system_tag`)"
           },
           {
             "name": "active_notification_previous_notification_item_index",
-            "unique": false,
+            "unique": true,
             "columnNames": [
               "previous_notification_item_id"
             ],
-            "createSql": "CREATE  INDEX `active_notification_previous_notification_item_index` ON `${TABLE_NAME}` (`previous_notification_item_id`)"
+            "createSql": "CREATE UNIQUE INDEX `active_notification_previous_notification_item_index` ON `${TABLE_NAME}` (`previous_notification_item_id`)"
           }
         ],
         "foreignKeys": [
@@ -195,7 +195,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2dea7387847fd91e12a99ef2ce9cda73\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3634918199a40a3b8e7447976c8ec76f\")"
     ]
   }
 }
