@@ -11,7 +11,7 @@ interface ActiveNotificationDao {
     fun querySync(
             appPackageName: String,
             systemId: Int,
-            systemTag: String?
+            systemTag: String
     ): ActiveNotificationItem?
 
     @Insert
@@ -27,6 +27,6 @@ interface ActiveNotificationDao {
     fun removeSync(
             appPackageName: String,
             systemId: Int,
-            systemTag: String?
+            systemTag: String
     )
 }

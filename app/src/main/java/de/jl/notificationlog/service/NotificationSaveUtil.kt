@@ -53,7 +53,7 @@ object NotificationSaveUtil {
                 val activeNotificationItem = database.activeNotification().querySync(
                         appPackageName = notification.packageName,
                         systemId = notification.id,
-                        systemTag = notification.tag
+                        systemTag = prepareTag(notification.tag)
                 )
 
                 if (activeNotificationItem == null) {
@@ -78,7 +78,7 @@ object NotificationSaveUtil {
                                     id = 0,
                                     appPackageName = notification.packageName,
                                     systemId = notification.id,
-                                    systemTag = notification.tag,
+                                    systemTag = prepareTag(notification.tag),
                                     previousNotificationItemId = notificationId
                             )
                     )
@@ -130,8 +130,14 @@ object NotificationSaveUtil {
             database.activeNotification().removeSync(
                     appPackageName = packageName,
                     systemId = notificationId,
-                    systemTag = notificationTag
+                    systemTag = prepareTag(notificationTag)
             )
         }
+    }
+
+    private fun prepareTag(tag: String?) = if (tag == null) {
+        "null"
+    } else {
+        "tag:$tag"
     }
 }

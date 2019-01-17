@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "55b2eb8ec21b2f23a139e7d3b49ff2f7",
+    "identityHash": "2dea7387847fd91e12a99ef2ce9cda73",
     "entities": [
       {
         "tableName": "notifications",
@@ -118,7 +118,7 @@
       },
       {
         "tableName": "active_notifications",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `app_package_name` TEXT NOT NULL, `system_id` INTEGER NOT NULL, `system_tag` TEXT, `previous_notification_item_id` INTEGER NOT NULL, FOREIGN KEY(`previous_notification_item_id`) REFERENCES `notifications`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `app_package_name` TEXT NOT NULL, `system_id` INTEGER NOT NULL, `system_tag` TEXT NOT NULL, `previous_notification_item_id` INTEGER NOT NULL, FOREIGN KEY(`previous_notification_item_id`) REFERENCES `notifications`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -142,7 +142,7 @@
             "fieldPath": "systemTag",
             "columnName": "system_tag",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "previousNotificationItemId",
@@ -195,7 +195,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"55b2eb8ec21b2f23a139e7d3b49ff2f7\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2dea7387847fd91e12a99ef2ce9cda73\")"
     ]
   }
 }

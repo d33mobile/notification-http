@@ -37,7 +37,7 @@ data class ActiveNotificationItem(
         @ColumnInfo(name = "system_id")
         val systemId: Int,
         @ColumnInfo(name = "system_tag")
-        val systemTag: String?,
+        val systemTag: String,
         @ColumnInfo(name = "previous_notification_item_id")
         val previousNotificationItemId: Long
 )
