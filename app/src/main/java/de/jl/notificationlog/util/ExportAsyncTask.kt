@@ -51,14 +51,8 @@ class ExportAsyncTask(private val context: Application, private val packageName:
 
                     while (true) {
                         val data = when (exportAllApps) {
-                            true -> when (sorting) {
-                                Configuration.Sorting.OldestFirst -> db.getAllNotificationsPageSyncAsc(PAGE_SIZE, offset)
-                                Configuration.Sorting.NewestFirst -> db.getAllNotificationsPageSyncDesc(PAGE_SIZE, offset)
-                            }
-                            false -> when (sorting) {
-                                Configuration.Sorting.OldestFirst -> db.getNotificationsByAppPageSyncAsc(packageName, PAGE_SIZE, offset)
-                                Configuration.Sorting.NewestFirst -> db.getNotificationsByAppPageSyncDesc(packageName, PAGE_SIZE, offset)
-                            }
+                            true -> db.getAllNotificationsPageSync(PAGE_SIZE, offset, sorting)
+                            false -> db.getNotificationsByAppPageSync(packageName, PAGE_SIZE, offset, sorting)
                         }
 
                         offset += data.size

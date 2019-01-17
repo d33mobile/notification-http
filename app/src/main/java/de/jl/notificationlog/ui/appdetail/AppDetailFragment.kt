@@ -63,14 +63,8 @@ class AppDetailFragment : Fragment() {
         val sorting = Configuration.with(context!!).sorting
 
         pagedList.value = LivePagedListBuilder(when {
-            selectedPackageName == AppListModel.ALL_APPS -> when(sorting) {
-                Configuration.Sorting.OldestFirst -> AppDatabase.with(context!!).notification().getNotificationsOfAllAppsAsc()
-                Configuration.Sorting.NewestFirst -> AppDatabase.with(context!!).notification().getNotificationsOfAllAppsDesc()
-            }
-            else -> when (sorting) {
-                Configuration.Sorting.OldestFirst -> AppDatabase.with(context!!).notification().getNotificationsByAppAsc(selectedPackageName)
-                Configuration.Sorting.NewestFirst -> AppDatabase.with(context!!).notification().getNotificationsByAppDesc(selectedPackageName)
-            }
+            selectedPackageName == AppListModel.ALL_APPS -> AppDatabase.with(context!!).notification().getNotificationsOfAllApps(sorting)
+            else -> AppDatabase.with(context!!).notification().getNotificationsByApp(selectedPackageName, sorting)
         }, 20).build()
     }
 
