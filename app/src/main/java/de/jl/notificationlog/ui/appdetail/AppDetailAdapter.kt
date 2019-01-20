@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.NotificationItemBinding
-import de.jl.notificationlog.util.PendingIntentHolder
 
 class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
         object: DiffUtil.ItemCallback<NotificationItem>() {
@@ -16,6 +15,8 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             override fun areItemsTheSame(p0: NotificationItem, p1: NotificationItem) = p0.id == p1.id
         }
 ) {
+    var listener: AppDetailAdapterListener? = null
+
     override fun onCreateViewHolder(container: ViewGroup, viewType: Int) = NotificationHolder(
         NotificationItemBinding.inflate(
                 LayoutInflater.from(container.context),
@@ -39,7 +40,7 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             holder.binding.maxProgress = item.progressMax
             holder.binding.indeterminate = item.progressIndeterminate
             holder.binding.card.setOnClickListener {
-                PendingIntentHolder.read(item.id)?.send()
+                listener?.onNotificationClicked(item.id)
             }
         } else {
             holder.binding.title = ""
@@ -56,3 +57,7 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
 }
 
 class NotificationHolder(val binding: NotificationItemBinding): RecyclerView.ViewHolder(binding.root)
+
+interface AppDetailAdapterListener {
+    fun onNotificationClicked(savedNotificationId: Long)
+}

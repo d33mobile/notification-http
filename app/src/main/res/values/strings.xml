@@ -63,4 +63,11 @@
     <string name="version_handling_all">show all versions</string>
     <string name="version_handling_oldest">show oldest version</string>
     <string name="version_handling_newest">show newest version</string>
+
+    <!-- opening notifications -->
+    <string name="open_notification_action_expired">The action is not available anymore</string>
+    <string name="open_notification_info_title">Opening notifications</string>
+    <string name="open_notification_info_text">The action of notifications can not be saved reliable. It only works with recent notifications and even then not always.</string>
+    <string name="open_notification_info_positive">Accept</string>
+    <string name="open_notification_info_negative">Reject</string>
 </resources>

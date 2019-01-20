@@ -2,6 +2,7 @@ package de.jl.notificationlog.ui.appdetail
 
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.PendingIntent
 import androidx.lifecycle.Observer
 import androidx.paging.LivePagedListBuilder
 import android.content.Intent
@@ -13,6 +14,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.PagedList
+import com.google.android.material.snackbar.Snackbar
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.item.NotificationItem
@@ -23,6 +25,7 @@ import de.jl.notificationlog.ui.VersionHandlingSettingDialogFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ExportAsyncTask
+import de.jl.notificationlog.util.PendingIntentHolder
 
 /**
  * A fragment representing a single App detail screen.
@@ -30,7 +33,7 @@ import de.jl.notificationlog.util.ExportAsyncTask
  * in two-pane mode (on tablets) or a [AppDetailActivity]
  * on handsets.
  */
-class AppDetailFragment : Fragment() {
+class AppDetailFragment : Fragment(), AppDetailAdapterListener {
     companion object {
         private const val ARG_PACKAGE_NAME = "packageName"
         private const val REQUEST_CHOSE_EXPORT_PATH = 1
@@ -47,6 +50,7 @@ class AppDetailFragment : Fragment() {
     val isLoggingEnabled = MutableLiveData<Boolean>()
     val pagedList = MutableLiveData<LiveData<PagedList<NotificationItem>>>()
     val pagedListContent = Transformations.switchMap(pagedList, { it })
+    lateinit var binding: AppDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,9 +75,10 @@ class AppDetailFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = AppDetailBinding.inflate(inflater, container, false)
+        binding = AppDetailBinding.inflate(inflater, container, false)
 
         val adapter = AppDetailAdapter()
+        adapter.listener = this
 
         updatePagedList()
 
@@ -170,6 +175,41 @@ class AppDetailFragment : Fragment() {
                 updatePagedList()
             }
             else -> super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    override fun onNotificationClicked(savedNotificationId: Long) {
+        if (Configuration.with(context!!).openNotifications) {
+            openNotificationAfterConfirmation(savedNotificationId)
+        } else {
+            OpenNotificationInfoDialogFragment
+                    .newInstance(savedNotificationId)
+                    .apply {
+                        setTargetFragment(this@AppDetailFragment, 0)
+                    }
+                    .show(fragmentManager!!)
+        }
+    }
+
+    fun openNotificationAfterConfirmation(savedNotificationId: Long) {
+        if (!tryOpenNotification(savedNotificationId)) {
+            Snackbar.make(binding.recycler, R.string.open_notification_action_expired, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun tryOpenNotification(savedNotificationId: Long): Boolean {
+        val pendingIntent = PendingIntentHolder.read(savedNotificationId)
+
+        return if (pendingIntent == null) {
+            false
+        } else {
+            try {
+                pendingIntent.send()
+
+                true
+            } catch (ex: PendingIntent.CanceledException) {
+                false
+            }
         }
     }
 }

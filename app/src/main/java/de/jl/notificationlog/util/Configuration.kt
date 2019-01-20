@@ -15,6 +15,7 @@ class Configuration(context: Application) {
         private const val VERSION_ALL = "all"
         private const val VERSION_OLDEST = "oldest"
         private const val VERSION_NEWEST = "newest"
+        private const val OPEN_NOTIFICATIONS = "open_notifications"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -95,6 +96,14 @@ class Configuration(context: Application) {
                         VersionHandling.ShowOldestVersionOnly -> VERSION_OLDEST
                         VersionHandling.ShowNewestVersionOnly -> VERSION_NEWEST
                     })
+                    .apply()
+        }
+
+    var openNotifications: Boolean
+        get() = preferences.getBoolean(OPEN_NOTIFICATIONS, false)
+        set(value) {
+            preferences.edit()
+                    .putBoolean(OPEN_NOTIFICATIONS, value)
                     .apply()
         }
 

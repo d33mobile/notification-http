@@ -60,4 +60,11 @@
     <string name="version_handling_all">alle Versionen anzeigen</string>
     <string name="version_handling_oldest">älteste Version anzeigen</string>
     <string name="version_handling_newest">neuste Version anzeigen</string>
+
+    <!-- opening notifications -->
+    <string name="open_notification_action_expired">Diese Aktion ist nicht mehr verfügbar</string>
+    <string name="open_notification_info_title">Benachrichtigungen öffnen</string>
+    <string name="open_notification_info_text">Die Aktionen von Benachrichtigungen können nicht zuverlässig gespeichert werden. Es funktioniert nur mit relativ neuen Benachrichtigungen und selbst dann nicht immer.</string>
+    <string name="open_notification_info_positive">Akzeptieren</string>
+    <string name="open_notification_info_negative">Ablehnen</string>
 </resources>
