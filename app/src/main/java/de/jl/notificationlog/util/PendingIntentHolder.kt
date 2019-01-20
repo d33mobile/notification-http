@@ -1,9 +1,10 @@
 package de.jl.notificationlog.util
 
 import android.app.PendingIntent
+import androidx.collection.LruCache
 
 object PendingIntentHolder {
-    private val data = mutableMapOf<Long, PendingIntent>()
+    private val data = LruCache<Long, PendingIntent>(64)
     private val lock = Any()
 
     fun read(savedNotificationId: Long) = synchronized(lock) {
@@ -11,6 +12,6 @@ object PendingIntentHolder {
     }
 
     fun save(savedNotificationId: Long, contentIntent: PendingIntent) = synchronized(lock) {
-        data[savedNotificationId] = contentIntent
+        data.put(savedNotificationId, contentIntent)
     }
 }
