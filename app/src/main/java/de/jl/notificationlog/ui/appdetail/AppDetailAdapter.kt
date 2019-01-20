@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.NotificationItemBinding
+import de.jl.notificationlog.util.PendingIntentHolder
 
 class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
         object: DiffUtil.ItemCallback<NotificationItem>() {
@@ -37,6 +38,9 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             holder.binding.progress = item.progress
             holder.binding.maxProgress = item.progressMax
             holder.binding.indeterminate = item.progressIndeterminate
+            holder.binding.card.setOnClickListener {
+                PendingIntentHolder.read(item.id)?.send()
+            }
         } else {
             holder.binding.title = ""
             holder.binding.text = ""
@@ -44,6 +48,7 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             holder.binding.progress = 0
             holder.binding.maxProgress = 0
             holder.binding.indeterminate = false
+            holder.binding.card.setOnClickListener(null)
         }
 
         holder.binding.executePendingBindings()
