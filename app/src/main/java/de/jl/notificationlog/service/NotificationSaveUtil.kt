@@ -163,6 +163,26 @@ object NotificationSaveUtil {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    fun restoreClickHandlers(statusBarNotifications: List<StatusBarNotification>, context: Context) {
+        val database = AppDatabase.with(context)
+
+        saveThread.submit {
+            statusBarNotifications.forEach { notification ->
+                database.activeNotification().querySync(
+                        appPackageName = notification.packageName,
+                        systemTag = prepareTag(notification.tag),
+                        systemId = notification.id
+                )?.let { activeNotificationItem ->
+                    PendingIntentHolder.save(
+                            savedNotificationId = activeNotificationItem.previousNotificationItemId,
+                            contentIntent = notification.notification.contentIntent
+                    )
+                }
+            }
+        }
+    }
+
     private fun prepareTag(tag: String?) = if (tag == null) {
         "null"
     } else {

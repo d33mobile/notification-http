@@ -27,4 +27,14 @@ class NotificationListenerService : android.service.notification.NotificationLis
 
         NotificationSaveUtil.saveNotificationRemoved(sbn, this)
     }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, "onListenerConnected")
+        }
+
+        NotificationSaveUtil.restoreClickHandlers(activeNotifications.toList(), this)
+    }
 }
