@@ -10,6 +10,7 @@ import de.jl.notificationlog.data.item.ActiveNotificationItem
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.notification.NotificationParser
 import de.jl.notificationlog.util.Configuration
+import de.jl.notificationlog.util.PendingIntentHolder
 import java.util.concurrent.Executors
 
 object NotificationSaveUtil {
@@ -24,7 +25,7 @@ object NotificationSaveUtil {
         val database = AppDatabase.with(context)
 
         saveThread.submit {
-            database.notification().insertSync(
+            val notificationId = database.notification().insertSync(
                     NotificationItem(
                             // id is auto generated
                             id = 0,
@@ -38,6 +39,12 @@ object NotificationSaveUtil {
                             isOldestVersion = true,
                             isNewestVersion = true
                     )
+            )
+
+            // save click action
+            PendingIntentHolder.save(
+                    savedNotificationId = notificationId,
+                    contentIntent = notification.contentIntent
             )
         }
     }
@@ -88,6 +95,12 @@ object NotificationSaveUtil {
                                     previousNotificationItemId = notificationId
                             )
                     )
+
+                    // save click action
+                    PendingIntentHolder.save(
+                            savedNotificationId = notificationId,
+                            contentIntent = notification.notification.contentIntent
+                    )
                 } else {
                     // update previous item
                     database.notification().setIsNewestNotificationSync(
@@ -116,6 +129,12 @@ object NotificationSaveUtil {
                     database.activeNotification().updateLastNotificationIdSync(
                             activeNotificationId = activeNotificationItem.id,
                             lastNotificationId = notificationId
+                    )
+
+                    // save click action
+                    PendingIntentHolder.save(
+                            savedNotificationId = notificationId,
+                            contentIntent = notification.notification.contentIntent
                     )
                 }
             }
