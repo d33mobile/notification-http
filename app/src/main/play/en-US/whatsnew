@@ -1,2 +1,1 @@
-- logging notification progress
-- at notification updates, you can show the first, the last or all versions
+- allow executing the tap action of saved notifications (with limitations)
