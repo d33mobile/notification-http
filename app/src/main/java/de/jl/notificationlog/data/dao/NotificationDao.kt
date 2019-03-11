@@ -15,7 +15,7 @@ abstract class NotificationDao {
     abstract fun insertSync(notificationItem: NotificationItem): Long
 
     @Query("UPDATE NOTIFICATIONS SET is_newest_version = :isNewestNotification WHERE id = :id")
-    abstract fun setIsNewestNotificationSync(id: Long, isNewestNotification: Boolean): Long
+    abstract fun setIsNewestNotificationSync(id: Long, isNewestNotification: Boolean)
 
     fun getNotificationsByApp(packageName: String, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = when (versionHandling) {
         Configuration.VersionHandling.ShowAllVersions -> when (sorting) {
