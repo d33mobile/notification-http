@@ -46,7 +46,7 @@
     <string name="action_checkbox_enable_logging">Protokolliere %s</string>
 
     <!-- settings screen -->
-    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_settings">Filtereinstellungen</string>
     <string name="settings_radio_blacklist">Die ausgewählten Apps nicht protokollieren</string>
     <string name="settings_radio_whitelist">Nur die ausgewählten Apps protokollieren</string>
     <string name="settings_search_hint">Apps suchen</string>

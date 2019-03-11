@@ -49,7 +49,7 @@
     <string name="action_checkbox_enable_logging">log %s</string>
 
     <!-- settings screen -->
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Filter settings</string>
     <string name="settings_radio_blacklist">Log all Apps except the selected ones</string>
     <string name="settings_radio_whitelist">Log only the following Apps</string>
     <string name="settings_search_hint">Search Apps</string>
