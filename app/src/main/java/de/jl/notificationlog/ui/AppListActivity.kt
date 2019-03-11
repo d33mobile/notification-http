@@ -106,6 +106,11 @@ class AppListActivity : AppCompatActivity() {
 
             true
         }
+        item.itemId == R.id.action_auto_delete -> {
+            DeleteOldNotificationsDialog().show(supportFragmentManager)
+
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 }

@@ -16,6 +16,7 @@ class Configuration(context: Application) {
         private const val VERSION_OLDEST = "oldest"
         private const val VERSION_NEWEST = "newest"
         private const val OPEN_NOTIFICATIONS = "open_notifications"
+        private const val NOTIFICATION_KEEPING_DAYS = "notification_keeping_days"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -104,6 +105,14 @@ class Configuration(context: Application) {
         set(value) {
             preferences.edit()
                     .putBoolean(OPEN_NOTIFICATIONS, value)
+                    .apply()
+        }
+
+    var notificationKeepingDays: Int
+        get() = preferences.getInt(NOTIFICATION_KEEPING_DAYS, 0)
+        set(value) {
+            preferences.edit()
+                    .putInt(NOTIFICATION_KEEPING_DAYS, value)
                     .apply()
         }
 

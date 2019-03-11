@@ -70,4 +70,12 @@
     <string name="open_notification_info_text">The action of notifications can not be saved reliable. It only works with recent notifications and even then not always.</string>
     <string name="open_notification_info_positive">Accept</string>
     <string name="open_notification_info_negative">Reject</string>
+
+    <!-- deleting old notifications -->
+    <string name="delete_old_notifications_title">Automatically delete old notifications</string>
+    <string name="delete_old_notifications_never">Never</string>
+    <plurals name="delete_old_notifications_days">
+        <item quantity="one">after %d day</item>
+        <item quantity="other">after %d days</item>
+    </plurals>
 </resources>

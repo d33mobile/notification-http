@@ -154,4 +154,7 @@ abstract class NotificationDao {
 
     @Query("DELETE FROM notifications WHERE package = :packageName")
     abstract fun deleteNotificationsByAppSync(packageName: String)
+
+    @Query("DELETE FROM notifications WHERE time < :olderThanTimestamp")
+    abstract fun deleteOldNotificationItemsSync(olderThanTimestamp: Long)
 }

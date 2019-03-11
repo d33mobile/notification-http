@@ -67,4 +67,12 @@
     <string name="open_notification_info_text">Die Aktionen von Benachrichtigungen können nicht zuverlässig gespeichert werden. Es funktioniert nur mit relativ neuen Benachrichtigungen und selbst dann nicht immer.</string>
     <string name="open_notification_info_positive">Akzeptieren</string>
     <string name="open_notification_info_negative">Ablehnen</string>
+
+    <!-- deleting old notifications -->
+    <string name="delete_old_notifications_title">Benachrichtigungen automatisch löschen</string>
+    <string name="delete_old_notifications_never">Nie</string>
+    <plurals name="delete_old_notifications_days">
+        <item quantity="one">nach %d Tag</item>
+        <item quantity="other">nach %d Tagen</item>
+    </plurals>
 </resources>

@@ -10,4 +10,9 @@
         android:id="@+id/action_settings"
         app:showAsAction="never"
         android:title="@string/title_activity_settings" />
+
+    <item
+        android:id="@+id/action_auto_delete"
+        app:showAsAction="never"
+        android:title="@string/delete_old_notifications_title" />
 </menu>
