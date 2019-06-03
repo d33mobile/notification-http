@@ -1,5 +1,6 @@
 package de.jl.notificationlog.ui.appdetail
 
+import android.content.Context
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,14 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             override fun areItemsTheSame(p0: NotificationItem, p1: NotificationItem) = p0.id == p1.id
         }
 ) {
+    companion object {
+        fun formatTime(time: Long, context: Context) = DateUtils.formatDateTime(
+                context,
+                time,
+                DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
+        )
+    }
+
     var listener: AppDetailAdapterListener? = null
 
     override fun onCreateViewHolder(container: ViewGroup, viewType: Int) = NotificationHolder(
@@ -31,17 +40,12 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
         if (item != null) {
             holder.binding.title = item.title
             holder.binding.text = item.text
-            holder.binding.time = DateUtils.formatDateTime(
-                    holder.itemView.context,
-                    item.time,
-                    DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME
-            )
+            holder.binding.time = formatTime(item.time, holder.binding.root.context)
             holder.binding.progress = item.progress
             holder.binding.maxProgress = item.progressMax
             holder.binding.indeterminate = item.progressIndeterminate
-            holder.binding.card.setOnClickListener {
-                listener?.onNotificationClicked(item.id)
-            }
+            holder.binding.card.setOnClickListener { listener?.onNotificationClicked(item.id) }
+            holder.binding.card.setOnLongClickListener { listener?.onNotificationLongClicked(item) ?: false }
         } else {
             holder.binding.title = ""
             holder.binding.text = ""
@@ -50,6 +54,7 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
             holder.binding.maxProgress = 0
             holder.binding.indeterminate = false
             holder.binding.card.setOnClickListener(null)
+            holder.binding.card.setOnLongClickListener(null)
         }
 
         holder.binding.executePendingBindings()
@@ -60,4 +65,5 @@ class NotificationHolder(val binding: NotificationItemBinding): RecyclerView.Vie
 
 interface AppDetailAdapterListener {
     fun onNotificationClicked(savedNotificationId: Long)
+    fun onNotificationLongClicked(item: NotificationItem): Boolean
 }

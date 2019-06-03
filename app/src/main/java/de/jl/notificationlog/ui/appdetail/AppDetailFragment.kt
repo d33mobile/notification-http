@@ -26,6 +26,9 @@ import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ExportAsyncTask
 import de.jl.notificationlog.util.PendingIntentHolder
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 
 /**
  * A fragment representing a single App detail screen.
@@ -189,6 +192,18 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
                     }
                     .show(fragmentManager!!)
         }
+    }
+
+    override fun onNotificationLongClicked(item: NotificationItem): Boolean {
+        Snackbar.make(binding.recycler, R.string.copy_to_clipboard_toast, Snackbar.LENGTH_SHORT).show()
+
+        (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                .primaryClip = ClipData.newPlainText(
+                "notification",
+                "${AppDetailAdapter.formatTime(item.time, context!!)}: ${item.title} / ${item.text}"
+        )
+
+        return true
     }
 
     fun openNotificationAfterConfirmation(savedNotificationId: Long) {

@@ -78,4 +78,7 @@
         <item quantity="one">after %d day</item>
         <item quantity="other">after %d days</item>
     </plurals>
+
+    <!-- copy to clipboard -->
+    <string name="copy_to_clipboard_toast">Copied to clipboard</string>
 </resources>

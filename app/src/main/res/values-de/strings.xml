@@ -75,4 +75,7 @@
         <item quantity="one">nach %d Tag</item>
         <item quantity="other">nach %d Tagen</item>
     </plurals>
+
+    <!-- copy to clipboard -->
+    <string name="copy_to_clipboard_toast">In die Zwischenablage kopiert</string>
 </resources>
