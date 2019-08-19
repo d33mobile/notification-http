@@ -2,8 +2,9 @@ NotificationLog is an Android App which logs the notifications (locally) and all
 
 ## Screenshots
 
-![screenshot showing the list of Apps in NotificationLog](./app/src/main/play/en-US/listing/phoneScreenshots/1.png)
-![screenshot showing the notifications of one App in NotificationLog](./app/src/main/play/en-US/listing/phoneScreenshots/2.png)
+![screenshot showing the list of Apps in NotificationLog](./app/src/main/play/listings/en-US/graphics/phone-screenshots/391911807240794485.png)
+
+![screenshot showing the notifications of one App in NotificationLog](./app/src/main/play/listings/en-US/graphics/phone-screenshots/2565105775754909137.png)
 
 ## Download
 
