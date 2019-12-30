@@ -2,7 +2,7 @@
 <resources>
     <string name="license" translatable="false">
         NotificationLog - An Android App to log the notifications
-        \nCopyright (C) 2018 - 2019 Jonas Lochmann
+        \nCopyright (C) 2018 - 2020 Jonas Lochmann
 
         \n\nThis program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
