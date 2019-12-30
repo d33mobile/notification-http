@@ -1,6 +1,3 @@
-ic_launcher:
-http://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=clipart&foreground.space.trim=1&foreground.space.pad=0.1&foreground.clipart=res%2Fclipart%2Ficons%2Fsocial_notifications_none.svg&foreColor=fff%2C0&crop=0&backgroundShape=vrect&backColor=3f51b5%2C100&effects=dogear
-
 ic_app_list:
 http://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=clipart&foreground.space.trim=1&foreground.space.pad=0.2&foreground.clipart=res%2Fclipart%2Ficons%2Fnavigation_apps.svg&foreColor=fff%2C0&crop=0&backgroundShape=square&backColor=3f51b5%2C100&effects=score
 
