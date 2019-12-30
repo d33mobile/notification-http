@@ -1,1 +1,2 @@
-Added option to copy notification to the clipboard
+- new icon
+- updated libraries and build tools

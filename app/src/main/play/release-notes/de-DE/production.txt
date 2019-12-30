@@ -1,1 +1,2 @@
-Möglichkeit, Benachrichtigungen in die Zwischenablage zu kopieren
+- neues Symbol
+- Libraries und Buildtools aktualisiert
