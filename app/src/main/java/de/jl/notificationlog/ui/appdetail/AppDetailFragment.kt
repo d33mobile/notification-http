@@ -49,7 +49,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         }
     }
 
-    val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME) }
+    val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME)!! }
     val isLoggingEnabled = MutableLiveData<Boolean>()
     val pagedList = MutableLiveData<LiveData<PagedList<NotificationItem>>>()
     val pagedListContent = Transformations.switchMap(pagedList, { it })
@@ -197,10 +197,11 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
     override fun onNotificationLongClicked(item: NotificationItem): Boolean {
         Snackbar.make(binding.recycler, R.string.copy_to_clipboard_toast, Snackbar.LENGTH_SHORT).show()
 
-        (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-                .primaryClip = ClipData.newPlainText(
-                "notification",
-                "${AppDetailAdapter.formatTime(item.time, context!!)}: ${item.title} / ${item.text}"
+        (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
+                ClipData.newPlainText(
+                        "notification",
+                        "${AppDetailAdapter.formatTime(item.time, context!!)}: ${item.title} / ${item.text}"
+                )
         )
 
         return true

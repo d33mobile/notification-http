@@ -22,7 +22,7 @@ class ClearDialogFragment : DialogFragment() {
         }
     }
 
-    private val packageName: String by lazy { arguments!!.getString(ARGUMENT_PACKAGE) }
+    private val packageName: String by lazy { arguments!!.getString(ARGUMENT_PACKAGE)!! }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity)
