@@ -71,10 +71,11 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         val sorting = Configuration.with(context!!).sorting
         val versionHandling = Configuration.with(context!!).versionHandling
 
-        pagedList.value = LivePagedListBuilder(when {
-            selectedPackageName == AppListModel.ALL_APPS -> AppDatabase.with(context!!).notification().getNotificationsOfAllApps(sorting, versionHandling)
-            else -> AppDatabase.with(context!!).notification().getNotificationsByApp(selectedPackageName, sorting, versionHandling)
-        }, 20).build()
+        pagedList.value = LivePagedListBuilder(
+                AppDatabase.with(context!!).notification().getNotifications(
+                        if (selectedPackageName == AppListModel.ALL_APPS) null else selectedPackageName, sorting, versionHandling
+                ), 20
+        ).build()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

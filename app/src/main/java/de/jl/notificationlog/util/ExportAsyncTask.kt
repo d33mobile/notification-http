@@ -51,10 +51,9 @@ class ExportAsyncTask(private val context: Application, private val packageName:
                     var offset = 0
 
                     while (true) {
-                        val data = when (exportAllApps) {
-                            true -> db.getAllNotificationsPageSync(PAGE_SIZE, offset, sorting, versionHandling)
-                            false -> db.getNotificationsByAppPageSync(packageName, PAGE_SIZE, offset, sorting, versionHandling)
-                        }
+                        val data = db.getNotificationsPageSync(
+                                if (exportAllApps) null else packageName, PAGE_SIZE, offset, sorting, versionHandling
+                        )
 
                         offset += data.size
 
