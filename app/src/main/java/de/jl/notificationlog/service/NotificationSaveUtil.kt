@@ -25,20 +25,16 @@ object NotificationSaveUtil {
         val database = AppDatabase.with(context)
 
         saveThread.submit {
-            val notificationId = database.notification().insertSync(
-                    NotificationItem(
-                            // id is auto generated
-                            id = 0,
-                            packageName = packageName,
-                            time = System.currentTimeMillis(),
-                            title = item.title,
-                            text = item.text,
-                            progress = item.progress,
-                            progressMax = item.progressMax,
-                            progressIndeterminate = item.progressIndeterminate,
-                            isOldestVersion = true,
-                            isNewestVersion = true
-                    )
+            val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                    packageName = packageName,
+                    time = System.currentTimeMillis(),
+                    title = item.title,
+                    text = item.text,
+                    progress = item.progress,
+                    progressMax = item.progressMax,
+                    progressIndeterminate = item.progressIndeterminate,
+                    isOldestVersion = true,
+                    isNewestVersion = true
             )
 
             // save click action
@@ -68,20 +64,16 @@ object NotificationSaveUtil {
 
                 if (activeNotificationItem == null) {
                     // add new item
-                    val notificationId = database.notification().insertSync(
-                            NotificationItem(
-                                    // id is auto generated
-                                    id = 0,
-                                    packageName = notification.packageName,
-                                    time = System.currentTimeMillis(),
-                                    title = item.title,
-                                    text = item.text,
-                                    progress = item.progress,
-                                    progressMax = item.progressMax,
-                                    progressIndeterminate = item.progressIndeterminate,
-                                    isOldestVersion = true,
-                                    isNewestVersion = true
-                            )
+                    val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                            packageName = notification.packageName,
+                            time = System.currentTimeMillis(),
+                            title = item.title,
+                            text = item.text,
+                            progress = item.progress,
+                            progressMax = item.progressMax,
+                            progressIndeterminate = item.progressIndeterminate,
+                            isOldestVersion = true,
+                            isNewestVersion = true
                     )
 
                     // add to active notifications
@@ -109,20 +101,16 @@ object NotificationSaveUtil {
                     )
 
                     // add new item
-                    val notificationId = database.notification().insertSync(
-                            NotificationItem(
-                                    // id is auto generated
-                                    id = 0,
-                                    packageName = notification.packageName,
-                                    time = System.currentTimeMillis(),
-                                    title = item.title,
-                                    text = item.text,
-                                    progress = item.progress,
-                                    progressMax = item.progressMax,
-                                    progressIndeterminate = item.progressIndeterminate,
-                                    isOldestVersion = false,
-                                    isNewestVersion = true
-                            )
+                    val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                            packageName = notification.packageName,
+                            time = System.currentTimeMillis(),
+                            title = item.title,
+                            text = item.text,
+                            progress = item.progress,
+                            progressMax = item.progressMax,
+                            progressIndeterminate = item.progressIndeterminate,
+                            isOldestVersion = false,
+                            isNewestVersion = true
                     )
 
                     // update old notification item

@@ -5,11 +5,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import android.content.Context
+import android.util.Log
+import de.jl.notificationlog.BuildConfig
 import de.jl.notificationlog.data.item.ActiveNotificationItem
 import de.jl.notificationlog.data.item.NotificationItem
+import de.jl.notificationlog.util.Configuration
 
 @androidx.room.Database(
-        version = 5,
+        version = 6,
         entities = [
             NotificationItem::class,
             ActiveNotificationItem::class
@@ -17,6 +20,7 @@ import de.jl.notificationlog.data.item.NotificationItem
 )
 abstract class AppDatabase: RoomDatabase(), Database {
     companion object {
+        private const val LOG_TAG = "AppDatabase"
         private val lock = Object()
         private var instance: AppDatabase? = null
 
@@ -75,8 +79,62 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         database.execSQL("ALTER TABLE `notifications` ADD COLUMN `progress_max` INTEGER NOT NULL DEFAULT 0")
                                         database.execSQL("ALTER TABLE `notifications` ADD COLUMN `progress_indeterminate` INTEGER NOT NULL DEFAULT 0")
                                     }
+                                },
+                                object: Migration(5, 6) {
+                                    override fun migrate(database: SupportSQLiteDatabase) {
+                                        // add new column
+                                        database.execSQL("ALTER TABLE `notifications` ADD COLUMN `duplicate_group_id` INTEGER NOT NULL DEFAULT 0")
+                                        database.execSQL("UPDATE `notifications` SET `duplicate_group_id` = `id`")
+
+                                        // add new indexes
+                                        database.execSQL("CREATE INDEX `notifications_index_duplicate_group` ON `notifications` (`duplicate_group_id`)")
+                                        database.execSQL("CREATE INDEX `notifications_index_app_duplicate_group` ON `notifications` (`package`, `duplicate_group_id`)")
+                                    }
                                 }
-                        ).build()
+                        ).build().apply {
+                            if (BuildConfig.DEBUG) {
+                                Thread {
+                                    val queries = mutableListOf<String>()
+
+                                    listOf(null, "com.demo").forEach { packageName ->
+                                        listOf(Configuration.Sorting.NewestFirst, Configuration.Sorting.OldestFirst).forEach { sorting ->
+                                            listOf(
+                                                    Configuration.VersionHandling.ShowAllVersions,
+                                                    Configuration.VersionHandling.ShowNewestVersionOnly,
+                                                    Configuration.VersionHandling.ShowOldestVersionOnly
+                                            ).forEach { versionHandling ->
+                                                listOf(false, true).forEach { hideDuplicates ->
+                                                    queries.add(notification().buildSelectQuery(
+                                                            packageName = packageName,
+                                                            sorting = sorting,
+                                                            versionHandling = versionHandling,
+                                                            hideDuplicates = hideDuplicates,
+                                                            limit = null
+                                                    ).sql.replace("?", "'com.demo'"))
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    queries.forEach { query ->
+                                        Log.d(LOG_TAG, "-")
+                                        Log.d(LOG_TAG, "--------------------")
+                                        Log.d(LOG_TAG, "-")
+                                        Log.d(LOG_TAG, query)
+
+                                        query("EXPLAIN QUERY PLAN $query", null).use { result ->
+                                            Log.d(LOG_TAG, result.columnNames.joinToString(separator = "|"))
+
+                                            if (result.moveToFirst()) {
+                                                do {
+                                                    Log.d(LOG_TAG, (0 until result.columnCount).map { result.getString(it) }.joinToString(separator = "|"))
+                                                } while (result.moveToNext())
+                                            }
+                                        }
+                                    }
+                                }.start()
+                            }
+                        }
                     }
                 }
             }

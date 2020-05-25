@@ -10,6 +10,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_hide_duplicates"
+        android:title="@string/action_hide_duplicates"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_export"
         android:icon="@drawable/ic_save_white_24dp"
         android:title="@string/action_export"

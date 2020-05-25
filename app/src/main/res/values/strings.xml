@@ -81,4 +81,7 @@
 
     <!-- copy to clipboard -->
     <string name="copy_to_clipboard_toast">Copied to clipboard</string>
+
+    <!-- deduplication -->
+    <string name="action_hide_duplicates">Hide duplicates</string>
 </resources>

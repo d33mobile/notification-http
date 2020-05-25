@@ -51,6 +51,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
 
     val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME)!! }
     val isLoggingEnabled = MutableLiveData<Boolean>()
+    val isDeduplicationEnabled = MutableLiveData<Boolean>()
     val pagedList = MutableLiveData<LiveData<PagedList<NotificationItem>>>()
     val pagedListContent = Transformations.switchMap(pagedList, { it })
     lateinit var binding: AppDetailBinding
@@ -65,15 +66,18 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         super.onResume()
 
         isLoggingEnabled.value = Configuration.with(context!!).shouldLogNotifications(selectedPackageName)
+        isDeduplicationEnabled.value = Configuration.with(context!!).hideDuplicates
     }
 
     fun updatePagedList() {
         val sorting = Configuration.with(context!!).sorting
         val versionHandling = Configuration.with(context!!).versionHandling
+        val hideDuplicates = Configuration.with(context!!).hideDuplicates
 
         pagedList.value = LivePagedListBuilder(
                 AppDatabase.with(context!!).notification().getNotifications(
-                        if (selectedPackageName == AppListModel.ALL_APPS) null else selectedPackageName, sorting, versionHandling
+                        if (selectedPackageName == AppListModel.ALL_APPS) null else selectedPackageName,
+                        sorting, versionHandling, hideDuplicates
                 ), 20
         ).build()
     }
@@ -125,6 +129,23 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
 
                     true
                 }
+            }
+        }
+
+        menu.findItem(R.id.action_hide_duplicates).apply {
+            isDeduplicationEnabled.observe(viewLifecycleOwner, Observer {
+                isChecked = it
+            })
+
+            setOnMenuItemClickListener {
+                val newValue = !it.isChecked
+
+                Configuration.with(context!!).hideDuplicates = newValue
+                isDeduplicationEnabled.value = newValue
+
+                updatePagedList()
+
+                true
             }
         }
     }

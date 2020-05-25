@@ -17,6 +17,7 @@ class Configuration(context: Application) {
         private const val VERSION_NEWEST = "newest"
         private const val OPEN_NOTIFICATIONS = "open_notifications"
         private const val NOTIFICATION_KEEPING_DAYS = "notification_keeping_days"
+        private const val HIDE_DUPLICATES = "hide_duplicates"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -113,6 +114,14 @@ class Configuration(context: Application) {
         set(value) {
             preferences.edit()
                     .putInt(NOTIFICATION_KEEPING_DAYS, value)
+                    .apply()
+        }
+
+    var hideDuplicates: Boolean
+        get() = preferences.getBoolean(HIDE_DUPLICATES, false)
+        set(value) {
+            preferences.edit()
+                    .putBoolean(HIDE_DUPLICATES, value)
                     .apply()
         }
 

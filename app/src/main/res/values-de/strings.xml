@@ -78,4 +78,7 @@
 
     <!-- copy to clipboard -->
     <string name="copy_to_clipboard_toast">In die Zwischenablage kopiert</string>
+
+    <!-- deduplication -->
+    <string name="action_hide_duplicates">Duplikate ausblenden</string>
 </resources>

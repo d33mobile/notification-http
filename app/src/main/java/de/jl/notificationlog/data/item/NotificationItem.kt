@@ -32,6 +32,14 @@ import androidx.room.Index
             Index(
                     name = "notifications_newest_index_app_and_time",
                     value = ["is_newest_version", "package", "time"]
+            ),
+            Index(
+                    name = "notifications_index_duplicate_group",
+                    value = ["duplicate_group_id"]
+            ),
+            Index(
+                    name = "notifications_index_app_duplicate_group",
+                    value = ["package", "duplicate_group_id"]
             )
         ]
 )
@@ -60,5 +68,7 @@ data class NotificationItem(
         @ColumnInfo(name = "is_oldest_version")
         val isOldestVersion: Boolean,
         @ColumnInfo(name = "is_newest_version")
-        val isNewestVersion: Boolean
+        val isNewestVersion: Boolean,
+        @ColumnInfo(name = "duplicate_group_id")
+        val duplicateGroupId: Long
 )

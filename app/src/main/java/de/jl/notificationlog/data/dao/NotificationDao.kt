@@ -2,10 +2,7 @@ package de.jl.notificationlog.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.RawQuery
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQueryBuilder
 import de.jl.notificationlog.data.item.AppWithNotification
@@ -14,8 +11,80 @@ import de.jl.notificationlog.util.Configuration
 
 @Dao
 abstract class NotificationDao {
-    @Insert
-    abstract fun insertSync(notificationItem: NotificationItem): Long
+    @Transaction
+    open fun insertSyncHandlePossibleDuplicate(
+            packageName: String,
+            time: Long,
+            title: String,
+            text: String,
+            progress: Int,
+            progressMax: Int,
+            progressIndeterminate: Boolean,
+            isOldestVersion: Boolean,
+            isNewestVersion: Boolean
+    ): Long {
+        val previous = getLastNotificationByAppSync(packageName)
+
+        if (
+            previous != null &&
+            previous.title == title && previous.text == text &&
+            previous.progress == progress && previous.progressMax == progressMax &&
+            previous.progressIndeterminate == progressIndeterminate
+        ) {
+            return insertSync(
+                    packageName = packageName,
+                    time = time,
+                    title = title,
+                    text = text,
+                    progress = progress,
+                    progressMax = progressMax,
+                    progressIndeterminate = progressIndeterminate,
+                    isOldestVersion = isOldestVersion,
+                    isNewestVersion = isNewestVersion,
+                    duplicateGroupdId = previous.duplicateGroupId
+            )
+        } else {
+            val notificationId = insertSync(
+                    packageName = packageName,
+                    time = time,
+                    title = title,
+                    text = text,
+                    progress = progress,
+                    progressMax = progressMax,
+                    progressIndeterminate = progressIndeterminate,
+                    isOldestVersion = isOldestVersion,
+                    isNewestVersion = isNewestVersion,
+                    duplicateGroupdId = 0
+            )
+
+            setDuplicateGroupId(
+                    notificationId = notificationId,
+                    duplicateGroupdId = notificationId
+            )
+
+            return notificationId
+        }
+    }
+
+    @Query("INSERT INTO notifications (package, time, title, text, progress, progress_max, progress_indeterminate, is_oldest_version, is_newest_version, duplicate_group_id) VALUES (:packageName, :time, :title, :text, :progress, :progressMax, :progressIndeterminate, :isOldestVersion, :isNewestVersion, :duplicateGroupdId)")
+    protected abstract fun insertSync(
+            packageName: String,
+            time: Long,
+            title: String,
+            text: String,
+            progress: Int,
+            progressMax: Int,
+            progressIndeterminate: Boolean,
+            isOldestVersion: Boolean,
+            isNewestVersion: Boolean,
+            duplicateGroupdId: Long
+    ): Long
+
+    @Query("SELECT * FROM notifications WHERE package = :packageName ORDER BY time DESC LIMIT 1")
+    protected abstract fun getLastNotificationByAppSync(packageName: String): NotificationItem?
+
+    @Query("UPDATE notifications SET duplicate_group_id = :duplicateGroupdId WHERE id = :notificationId")
+    protected abstract fun setDuplicateGroupId(notificationId: Long, duplicateGroupdId: Long)
 
     @Query("UPDATE NOTIFICATIONS SET is_newest_version = :isNewestNotification WHERE id = :id")
     abstract fun setIsNewestNotificationSync(id: Long, isNewestNotification: Boolean)
@@ -26,27 +95,35 @@ abstract class NotificationDao {
     @RawQuery(observedEntities = [ NotificationItem::class ])
     protected abstract fun getNotificationsSync(query: SupportSQLiteQuery): List<NotificationItem>
 
-    fun getNotifications(packageName: String?, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = getNotificationsLive(
+    fun getNotifications(
+            packageName: String?, sorting: Configuration.Sorting,
+            versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
+    ) = getNotificationsLive(
             buildSelectQuery(
                     packageName = packageName,
                     sorting = sorting,
                     versionHandling = versionHandling,
-                    limit = null
+                    limit = null,
+                    hideDuplicates = hideDuplicates
             )
     )
 
-    fun getNotificationsPageSync(packageName: String?, rows: Int, offset: Int, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling) = getNotificationsSync(
+    fun getNotificationsPageSync(
+            packageName: String?, rows: Int, offset: Int, sorting: Configuration.Sorting,
+            versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
+    ) = getNotificationsSync(
             buildSelectQuery(
                     packageName = packageName,
                     sorting = sorting,
                     versionHandling = versionHandling,
-                    limit = "$offset,$rows"
+                    limit = "$offset,$rows",
+                    hideDuplicates = hideDuplicates
             )
     )
 
-    private fun buildSelectQuery(
+    fun buildSelectQuery(
             packageName: String?, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling,
-            limit: String?
+            limit: String?, hideDuplicates: Boolean
     ) = SupportSQLiteQueryBuilder.builder("notifications")
             .apply {
                 val conditions = mutableListOf<String>()
@@ -70,6 +147,19 @@ abstract class NotificationDao {
                     Configuration.Sorting.OldestFirst -> "ASC"
                     Configuration.Sorting.NewestFirst -> "DESC"
                 })
+
+                if (hideDuplicates) {
+                    columns(arrayOf(
+                            "MIN(id) AS id", "package",
+                            "MIN(time) AS time",
+                            "title", "text", "progress", "progress_max", "progress_indeterminate",
+                            // these values are not used in the UI
+                            // "oldest_version", "is_newest_version"
+                            "duplicate_group_id"
+                    ))
+
+                    groupBy("duplicate_group_id")
+                }
 
                 if (limit != null) {
                     limit(limit)
