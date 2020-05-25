@@ -39,7 +39,7 @@
     <string name="about_license">License</string>
     <string name="about_version">Version %s</string>
     <string name="about_source_title">Source Code</string>
-    <string name="about_source_text" translatable="false"><a href="https://gitlab.com/notificationlog/notificationlog-android">https://gitlab.com/notificationlog/notificationlog-android</a></string>
+    <string name="about_source_text" translatable="false"><a href="https://codeberg.org/jonas-l/notificationlog-android">https://codeberg.org/jonas-l/notificationlog-android</a></string>
     <string name="about_libraries">contained Software</string>
 
     <string name="action_export">Export</string>
