@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NavUtils
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import de.jl.notificationlog.R
 import de.jl.notificationlog.ui.AppListActivity
 import de.jl.notificationlog.ui.AppsUtil
+import de.jl.notificationlog.ui.CheckAuthActivity
 import de.jl.notificationlog.ui.applist.AppListModel
 import kotlinx.android.synthetic.main.activity_app_detail.*
 
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_app_detail.*
  * item details are presented side-by-side with a list of items
  * in a [AppListActivity].
  */
-class AppDetailActivity : AppCompatActivity() {
+class AppDetailActivity : CheckAuthActivity() {
     companion object {
         private const val EXTRA_PACKAGE_NAME = "packageName"
 

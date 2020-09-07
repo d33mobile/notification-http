@@ -86,4 +86,7 @@
 
     <!-- deduplication -->
     <string name="action_hide_duplicates">Hide duplicates</string>
+    <!-- authentication -->
+    <string name="auth_option">Request authentication</string>
+    <string name="auth_message">Sign in to view the notifications</string>
 </resources>

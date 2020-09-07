@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import de.jl.notificationlog.R
@@ -14,6 +13,7 @@ import de.jl.notificationlog.ui.appdetail.AppDetailFragment
 import de.jl.notificationlog.ui.applist.AppListFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.ui.settings.SettingsActivity
+import de.jl.notificationlog.util.Configuration
 import kotlinx.android.synthetic.main.activity_app_list.*
 import kotlinx.android.synthetic.main.app_list.*
 
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.app_list.*
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class AppListActivity : AppCompatActivity() {
+class AppListActivity : CheckAuthActivity() {
     companion object {
         private const val STATE_SELECTED_PACKAGE = "packageName"
     }
@@ -92,6 +92,11 @@ class AppListActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
+        menu!!.findItem(R.id.action_require_auth).let { option ->
+            option.isChecked = configuration.requireAuth
+            option.isVisible = CheckAuthUtil.SUPPORTED
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -108,6 +113,18 @@ class AppListActivity : AppCompatActivity() {
         }
         item.itemId == R.id.action_auto_delete -> {
             DeleteOldNotificationsDialog().show(supportFragmentManager)
+
+            true
+        }
+        item.itemId == R.id.action_require_auth -> {
+            val newValue = !item.isChecked
+
+            configuration.requireAuth = newValue
+            item.isChecked = newValue
+
+            if (newValue) {
+                authUtil.isAuthenticated = true
+            }
 
             true
         }

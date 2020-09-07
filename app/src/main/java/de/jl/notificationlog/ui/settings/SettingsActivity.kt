@@ -3,21 +3,18 @@ package de.jl.notificationlog.ui.settings
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.jl.notificationlog.R
 import de.jl.notificationlog.ui.App
 import de.jl.notificationlog.ui.AppsUtil
-import de.jl.notificationlog.util.Configuration
+import de.jl.notificationlog.ui.CheckAuthActivity
 
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.content_settings.*
 
-class SettingsActivity : AppCompatActivity() {
-    val configuration: Configuration by lazy { Configuration.with(this) }
-
+class SettingsActivity : CheckAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

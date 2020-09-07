@@ -18,6 +18,7 @@ class Configuration(context: Application) {
         private const val OPEN_NOTIFICATIONS = "open_notifications"
         private const val NOTIFICATION_KEEPING_DAYS = "notification_keeping_days"
         private const val HIDE_DUPLICATES = "hide_duplicates"
+        private const val REQUIRE_AUTH = "require_auth"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -124,6 +125,14 @@ class Configuration(context: Application) {
                     .putBoolean(HIDE_DUPLICATES, value)
                     .apply()
         }
+
+    var requireAuth: Boolean
+        get() = preferences.getBoolean(REQUIRE_AUTH, false)
+        set(value) {
+            preferences.edit()
+                    .putBoolean(REQUIRE_AUTH, value)
+                    .apply()
+    }
 
     enum class Sorting {
         NewestFirst,

@@ -15,4 +15,11 @@
         android:id="@+id/action_auto_delete"
         app:showAsAction="never"
         android:title="@string/delete_old_notifications_title" />
+
+    <item
+        android:id="@+id/action_require_auth"
+        app:showAsAction="never"
+        android:title="@string/auth_option"
+        android:visible="false"
+        android:checkable="true" />
 </menu>

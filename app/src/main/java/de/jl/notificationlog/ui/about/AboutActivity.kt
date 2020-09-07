@@ -1,14 +1,14 @@
 package de.jl.notificationlog.ui.about
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import de.jl.notificationlog.BuildConfig
 import de.jl.notificationlog.R
+import de.jl.notificationlog.ui.CheckAuthActivity
 import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.content_about.*
 
-class AboutActivity : AppCompatActivity() {
+class AboutActivity : CheckAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

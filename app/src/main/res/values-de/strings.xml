@@ -82,4 +82,8 @@
 
     <!-- deduplication -->
     <string name="action_hide_duplicates">Duplikate ausblenden</string>
+
+    <!-- authentication -->
+    <string name="auth_option">Authentifizierung erfordern</string>
+    <string name="auth_message">Zum Ansehen der Benachrichtigungen müssen Sie sich anmelden</string>
 </resources>
