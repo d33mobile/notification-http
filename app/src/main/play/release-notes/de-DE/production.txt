@@ -1,1 +1,2 @@
-- Option hinzugefügt, Duplikate auszublenden (wirkt nur bei Benachrichtigungen, die nach der Installation dieses Updates gespeichert wurden)
+- Option hinzugefügt, eine Authentifizierung zu verlangen
+- Anpassungen für Android 11

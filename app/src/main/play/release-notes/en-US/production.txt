@@ -1,1 +1,2 @@
-- added option to hide duplicates (only applies to notifications saved after installing this version)
+- added option to request an authentication
+- adjustments for Androd 11
