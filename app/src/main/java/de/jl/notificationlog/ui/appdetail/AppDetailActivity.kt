@@ -26,7 +26,7 @@ class AppDetailActivity : CheckAuthActivity() {
                 .putExtra(EXTRA_PACKAGE_NAME, packageName)
     }
 
-    private val selectedPackageName: String by lazy { intent.getStringExtra(EXTRA_PACKAGE_NAME) }
+    private val selectedPackageName: String by lazy { intent.getStringExtra(EXTRA_PACKAGE_NAME)!! }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

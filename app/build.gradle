@@ -8,11 +8,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "de.jl.notificationlog"
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 13
         versionName "1.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

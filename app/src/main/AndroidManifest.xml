@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="de.jl.notificationlog">
 
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
     <application
         android:name=".Application"
         android:allowBackup="false"
