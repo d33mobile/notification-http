@@ -1,2 +1,0 @@
-- added option to request an authentication
-- adjustments for Androd 11

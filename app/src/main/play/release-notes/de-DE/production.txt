@@ -1,2 +1,0 @@
-- Option hinzugefügt, eine Authentifizierung zu verlangen
-- Anpassungen für Android 11
