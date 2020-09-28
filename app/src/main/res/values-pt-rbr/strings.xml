@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res/android">
+    <!-- title for the app list (single pane mode) -->
+    <string name="title_app_list">Apps</string>
+
+    <!-- description for clear history action -->
+    <string name="action_clear">Limpar o histórico</string>
+
+    <!-- dialog: clear history -->
+    <string name="dialog_clear_all_title">Limpar o histórico de todos os Apps?</string>
+    <string name="dialog_clear_app_title">Limpar o histórico de <xliff:g example="GMail" id="app">%1$s</xliff:g>?</string>
+    <string name="dialog_clear_text">Isto não pode ser desfeito</string>
+    <string name="dialog_clear_positive">Limpar</string>
+    <string name="dialog_clear_negative">Cancelar</string>
+
+    <!-- text if there aren't any notifications saved -->
+    <string name="notification_list_empty">Ainda não há nenhuma notificação</string>
+
+    <!-- card which says how to enable the notification logging -->
+    <string name="card_enable_service_title">Permissão necessária</string>
+    <string name="card_enable_service_text">
+        NotificationLog precisa da sua permissão para aceder e guardar suas notificações.
+        Os dados só são guardados no seu dispositivo e não são enviados aos servidores externos.
+    </string>
+    <string name="card_enable_service_button">Permitir</string>
+
+    <!-- card which informs that logging was disabled for one App -->
+    <string name="card_logging_disabled_title">O registo foi desativado para %s</string>
+    <string name="card_logging_disabled_text">Pode alterar isso no menu</string>
+
+    <!-- special app entry which merges the data of all apps -->
+    <string name="merge_all_apps">Todos os Apps</string>
+
+    <!-- title for the about dialog -->
+    <string name="title_activity_about">Sobre</string>
+    <string name="about_license">Licença</string>
+    <string name="about_version">Versão %s</string>
+    <string name="about_source_title">Código fonte</string>
+    <string name="about_developer_key_title">Impressão digital PGP-Key do Desenvolvedor</string>
+    <string name="about_libraries">Software incluído</string>
+
+    <string name="action_export">Exportar</string>
+    <string name="export_done">Exportação concluída</string>
+    <string name="export_error">A exportação falhou</string>
+
+    <string name="action_checkbox_enable_logging">registrar %s</string>
+
+    <!-- settings screen -->
+    <string name="title_activity_settings">opções de filtro</string>
+    <string name="settings_radio_blacklist">Registar todas os apps, excepto os selecionados</string>
+    <string name="settings_radio_whitelist">Registar apenas os seguintes Aplicativos</string>
+    <string name="settings_search_hint">Busca Apps</string>
+
+    <!-- sorting -->
+    <string name="sorting_title">Ordenar</string>
+    <string name="sort_oldest_first">Antigos primeiro</string>
+    <string name="sort_newest_first">Recentes primeiro</string>
+
+    <string name="version_handling_title">Atualizações de Notificações</string>
+    <string name="version_handling_all">mostrar todas as versões</string>
+    <string name="version_handling_oldest">mostrar a versão mais antiga</string>
+    <string name="version_handling_newest">mostrar a versão mais recente</string>
+
+    <!-- opening notifications -->
+    <string name="open_notification_action_expired">A acção já não está disponível</string>
+    <string name="open_notification_info_title">Notificações de início</string>
+    <string name="open_notification_info_text">A acção das notificações não pode ser guardada de forma fiável. Só funciona com notificações recentes e, mesmo assim, nem sempre.</string>
+    <string name="open_notification_info_positive">Aceitar</string>
+    <string name="open_notification_info_negative">Recusar</string>
+
+    <!-- deleting old notifications -->
+    <string name="delete_old_notifications_title">Excluir automaticamente as notificações antigas</string>
+    <string name="delete_old_notifications_never">Nunca</string>
+    <plurals name="delete_old_notifications_days">
+        <item quantity="one">após %d dia</item>
+        <item quantity="other">após %d dias</item>
+    </plurals>
+
+    <!-- copy to clipboard -->
+    <string name="copy_to_clipboard_toast">Copiado para o clipboard</string>
+
+    <!-- deduplication -->
+    <string name="action_hide_duplicates">Ocultar duplicados</string>
+    <!-- authentication -->
+    <string name="auth_option">Pedir autenticação</string>
+    <string name="auth_message">Logon para ver as notificações</string>
+</resources>
