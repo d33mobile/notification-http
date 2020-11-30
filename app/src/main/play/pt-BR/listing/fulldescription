@@ -1,0 +1,3 @@
+NotificationLog registra as notificações do sistema localmente e permite visualizar, exportar e excluir todas elas ou apenas para aplicativo selecionado.
+
+O App usa o acesso às notificações da lista dos aplicativos instalados.
