@@ -47,8 +47,8 @@
 
     <!-- settings screen -->
     <string name="title_activity_settings">Configurar filtros</string>
-    <string name="settings_radio_blacklist">Registar todas os Apps, menos selecionados</string>
-    <string name="settings_radio_whitelist">Registar apenas os App selecionados</string>
+    <string name="settings_radio_blacklist">Registar todos os Apps, menos selecionados</string>
+    <string name="settings_radio_whitelist">Registar apenas os Apps selecionados</string>
     <string name="settings_search_hint">Encontrar os Apps</string>
 
     <!-- sorting -->
