@@ -24,7 +24,7 @@ class CheckAuthUtil(private val context: Context) {
 
     private val resetRunnable = Runnable { isAuthenticated = false }
 
-    fun createIntent(): Intent {
+    fun createIntent(): Intent? {
         if (!SUPPORTED) {
             throw IllegalArgumentException()
         }

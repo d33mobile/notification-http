@@ -19,7 +19,9 @@ open class CheckAuthActivity: AppCompatActivity() {
         authUtil.reportResume()
 
         if (configuration.requireAuth && !authUtil.isAuthenticated) {
-            startActivityForResult(authUtil.createIntent(), REQUEST_AUTH)
+            authUtil.createIntent()?.let { intent ->
+                startActivityForResult(intent, REQUEST_AUTH)
+            }
         }
     }
 
