@@ -43,13 +43,14 @@
 
         <ImageView
             android:visibility="@{isChecked ? View.GONE : View.VISIBLE}"
+            android:tint="?colorOnSurface"
             android:src="@drawable/ic_check_box_outline_blank_black_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <ImageView
             android:visibility="@{isChecked ? View.VISIBLE : View.GONE}"
-            android:tint="?colorPrimary"
+            android:tint="?colorControlActivated"
             android:src="@drawable/ic_check_box_black_48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

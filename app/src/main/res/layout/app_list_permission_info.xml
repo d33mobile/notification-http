@@ -24,7 +24,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:background="?selectableItemBackground"
+            style="?borderlessButtonStyle"
             android:layout_gravity="end"
             android:text="@string/card_enable_service_button"
             android:id="@+id/card_enable_service_button"
