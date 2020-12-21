@@ -86,7 +86,9 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         binding = AppDetailBinding.inflate(inflater, container, false)
 
         val adapter = AppDetailAdapter()
+
         adapter.listener = this
+        adapter.showAppTitles = selectedPackageName == AppListModel.ALL_APPS
 
         updatePagedList()
 

@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.NotificationItemBinding
+import de.jl.notificationlog.ui.AppsUtil
+import kotlin.properties.Delegates
 
 class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
         object: DiffUtil.ItemCallback<NotificationItem>() {
@@ -25,6 +27,7 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
     }
 
     var listener: AppDetailAdapterListener? = null
+    var showAppTitles: Boolean by Delegates.observable(false) { _, _, _ -> notifyDataSetChanged() }
 
     override fun onCreateViewHolder(container: ViewGroup, viewType: Int) = NotificationHolder(
         NotificationItemBinding.inflate(
@@ -38,9 +41,13 @@ class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
         val item = getItem(position)
 
         if (item != null) {
+            val baseTime = formatTime(item.time, holder.binding.root.context)
+            val appTitle = AppsUtil.getAppTitle(item.packageName, holder.binding.root.context)
+            val timeContent = if (showAppTitles) "$baseTime ($appTitle)" else baseTime
+
             holder.binding.title = item.title
             holder.binding.text = item.text
-            holder.binding.time = formatTime(item.time, holder.binding.root.context)
+            holder.binding.time = timeContent
             holder.binding.progress = item.progress
             holder.binding.maxProgress = item.progressMax
             holder.binding.indeterminate = item.progressIndeterminate
