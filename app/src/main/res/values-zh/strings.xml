@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/apk/res/android">
+    <!-- title for the app list (single pane mode) -->
+    <string name="title_app_list">应用程序</string>
+
+    <!-- description for clear history action -->
+    <string name="action_clear">清除历史</string>
+
+    <!-- dialog: clear history -->
+    <string name="dialog_clear_all_title">清除所有应用程序的历史？</string>
+    <string name="dialog_clear_app_title">清除 <xliff:g example="GMail" id="app">%1$s</xliff:g> 的历史吗？</string>
+    <string name="dialog_clear_text">这无法被撤销</string>
+    <string name="dialog_clear_positive">清除</string>
+    <string name="dialog_clear_negative">取消</string>
+
+    <!-- text if there aren't any notifications saved -->
+    <string name="notification_list_empty">尚无任何通知</string>
+
+    <!-- card which says how to enable the notification logging -->
+    <string name="card_enable_service_title">需要权限</string>
+    <string name="card_enable_service_text">
+        NotificationLog 需要权限才能访问和保存你的通知。
+        数据只保存在您的设备上，不会联网传输。
+    </string>
+    <string name="card_enable_service_button">允许</string>
+
+    <!-- card which informs that logging was disabled for one App -->
+    <string name="card_logging_disabled_title">对 %s 禁用了通知记录</string>
+    <string name="card_logging_disabled_text">你可以在菜单中更改设置</string>
+
+    <!-- special app entry which merges the data of all apps -->
+    <string name="merge_all_apps">所有应用</string>
+
+    <!-- title for the about dialog -->
+    <string name="title_activity_about">关于</string>
+    <string name="about_license">许可证</string>
+    <string name="about_version">版本 %s</string>
+    <string name="about_source_title">源代码</string>
+    <string name="about_developer_key_title">开发者 PGP-Key 指纹</string>
+    <string name="about_libraries">包含的软件</string>
+
+    <string name="action_export">导出</string>
+    <string name="export_done">导出完成</string>
+    <string name="export_error">导出失败</string>
+
+    <string name="action_checkbox_enable_logging">记录 %s</string>
+
+    <!-- settings screen -->
+    <string name="title_activity_settings">过滤器设置</string>
+    <string name="settings_radio_blacklist">将选中应用的通知排除在记录之外</string>
+    <string name="settings_radio_whitelist">只记录来自下列应用的通知</string>
+    <string name="settings_search_hint">搜索应用</string>
+
+    <!-- sorting -->
+    <string name="sorting_title">排序</string>
+    <string name="sort_oldest_first">最老优先</string>
+    <string name="sort_newest_first">最新优先</string>
+
+    <string name="version_handling_title">通知更新</string>
+    <string name="version_handling_all">显示所有版本</string>
+    <string name="version_handling_oldest">显示最老版本</string>
+    <string name="version_handling_newest">显示最新版本</string>
+
+    <!-- opening notifications -->
+    <string name="open_notification_action_expired">此操作不再可用</string>
+    <string name="open_notification_info_title">打开通知</string>
+    <string name="open_notification_info_text">本应用不能可靠地保存通知的动作。它只适用于最近的通知，甚至并不总是如此。</string>
+    <string name="open_notification_info_positive">接受</string>
+    <string name="open_notification_info_negative">拒绝</string>
+
+    <!-- deleting old notifications -->
+    <string name="delete_old_notifications_title">自动删除旧通知</string>
+    <string name="delete_old_notifications_never">从不</string>
+    <plurals name="delete_old_notifications_days">
+        <item quantity="one">一天后</item>
+        <item quantity="other">%d 天后</item>
+    </plurals>
+
+    <!-- copy to clipboard -->
+    <string name="copy_to_clipboard_toast">已复制到剪贴板</string>
+
+    <!-- deduplication -->
+    <string name="action_hide_duplicates">隐藏重复项</string>
+    <!-- authentication -->
+    <string name="auth_option">需要认证</string>
+    <string name="auth_message">登录以查看通知</string>
+</resources>
