@@ -1,5 +1,7 @@
 package de.jl.notificationlog.ui.applist
 
+import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -16,30 +18,47 @@ import de.jl.notificationlog.livedata.map
 import de.jl.notificationlog.livedata.switchMap
 import de.jl.notificationlog.ui.AppListActivity
 import de.jl.notificationlog.ui.AppsUtil
+import de.jl.notificationlog.ui.SortAppsSettingDialogFragment
+import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ServiceCheckUtil
 import kotlinx.android.synthetic.main.fragment_app_list.*
 
 class AppListFragment : Fragment() {
+    companion object {
+        private const val REQUEST_SORT_SETTING = 1
+    }
+
     private val appListActivity: AppListActivity by lazy { activity as AppListActivity }
     private val model: AppListModel by lazy { appListActivity.model }
     private val hasRequiredPermission = MutableLiveData<Boolean>()
+    private val appSorting = MutableLiveData<Configuration.AppSorting>()
+    private val appSortingIgnoreUnchanged = appSorting.ignoreUnchanged()
 
     private val apps: LiveData<List<AppListItem>> by lazy {
-        AppDatabase.with(context!!).notification().getAppsWithNotifications()
+        AppDatabase.with(requireContext()).notification().getAppsWithNotificationsUnsorted()
                 .ignoreUnchanged()
-                .map {
-                    apps ->
+                .switchMap { apps ->
+                    appSortingIgnoreUnchanged.map { sorting ->
+                        if (apps.isNotEmpty()) {
+                            val appsEventuallySortedByTime = when (sorting!!) {
+                                Configuration.AppSorting.Alphabetically -> apps
+                                Configuration.AppSorting.NewestFirst -> apps.sortedByDescending { it.lastNotificationTimestamp }
+                                Configuration.AppSorting.OldestFirst -> apps.sortedBy { it.lastNotificationTimestamp }
+                            }
 
-                    if (apps.isNotEmpty()) {
-                        apps.map { app ->
-
-                            AppEntryAppListItem(
+                            val appsWithTitle = appsEventuallySortedByTime.map { app ->
+                                AppEntryAppListItem(
                                     packageName = app.packageName,
-                                    title = AppsUtil.getAppTitle(app.packageName, context!!)
-                            )
-                        }.sortedBy { app -> app.title.toLowerCase() }
-                    } else {
-                        listOf(NoDataAppListItem)
+                                    title = AppsUtil.getAppTitle(app.packageName, requireContext())
+                                )
+                            }
+
+                            if (sorting == Configuration.AppSorting.Alphabetically) {
+                                appsWithTitle.sortedBy { app -> app.title.lowercase() }
+                            } else appsWithTitle
+                        } else {
+                            listOf(NoDataAppListItem)
+                        }
                     }
                 }
     }
@@ -62,7 +81,8 @@ class AppListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        hasRequiredPermission.value = ServiceCheckUtil.isNotificationReadingAllowed(context!!)
+        hasRequiredPermission.value = ServiceCheckUtil.isNotificationReadingAllowed(requireContext())
+        appSorting.value = Configuration.with(requireContext()).appSorting
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -74,8 +94,8 @@ class AppListFragment : Fragment() {
 
         val adapter = AppListAdapter()
 
-        listContent.observe(this, Observer { adapter.items = it })
-        model.selectedPackageName.observe(this, Observer { adapter.selectedAppPackageName = it })
+        listContent.observe(viewLifecycleOwner) { adapter.items = it }
+        model.selectedPackageName.observe(viewLifecycleOwner) { adapter.selectedAppPackageName = it }
 
         adapter.listener = object: AppAdapterListener {
             override fun onAppClicked(packageName: String) {
@@ -92,5 +112,20 @@ class AppListFragment : Fragment() {
         }
 
         recycler.adapter = adapter
+    }
+
+    fun showSortSetting() {
+        SortAppsSettingDialogFragment()
+            .apply {
+                setTargetFragment(this@AppListFragment, REQUEST_SORT_SETTING)
+            }.show(parentFragmentManager)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_SORT_SETTING && resultCode == Activity.RESULT_OK) {
+            appSorting.value = Configuration.with(requireContext()).appSorting
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

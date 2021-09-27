@@ -128,6 +128,12 @@ class AppListActivity : CheckAuthActivity() {
 
             true
         }
+        item.itemId == R.id.action_sort_apps -> {
+            (supportFragmentManager.findFragmentById(R.id.app_list_container) as AppListFragment)
+                .showSortSetting()
+
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 }

@@ -20,7 +20,7 @@ import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.AppDetailBinding
 import de.jl.notificationlog.ui.AppsUtil
-import de.jl.notificationlog.ui.SortSettingDialogFragment
+import de.jl.notificationlog.ui.SortNotificationSettingDialogFragment
 import de.jl.notificationlog.ui.VersionHandlingSettingDialogFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.util.Configuration
@@ -70,7 +70,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
     }
 
     fun updatePagedList() {
-        val sorting = Configuration.with(context!!).sorting
+        val sorting = Configuration.with(context!!).notificationSorting
         val versionHandling = Configuration.with(context!!).versionHandling
         val hideDuplicates = Configuration.with(context!!).hideDuplicates
 
@@ -164,7 +164,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
             true
         }
         item.itemId == R.id.action_sort -> {
-            SortSettingDialogFragment().apply {
+            SortNotificationSettingDialogFragment().apply {
                 setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_CONFIG)
             }.show(fragmentManager!!)
 

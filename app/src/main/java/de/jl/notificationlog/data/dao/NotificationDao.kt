@@ -96,12 +96,12 @@ abstract class NotificationDao {
     protected abstract fun getNotificationsSync(query: SupportSQLiteQuery): List<NotificationItem>
 
     fun getNotifications(
-            packageName: String?, sorting: Configuration.Sorting,
-            versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
+        packageName: String?, notificationSorting: Configuration.NotificationSorting,
+        versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
     ) = getNotificationsLive(
             buildSelectQuery(
                     packageName = packageName,
-                    sorting = sorting,
+                    notificationSorting = notificationSorting,
                     versionHandling = versionHandling,
                     limit = null,
                     hideDuplicates = hideDuplicates
@@ -109,12 +109,12 @@ abstract class NotificationDao {
     )
 
     fun getNotificationsPageSync(
-            packageName: String?, rows: Int, offset: Int, sorting: Configuration.Sorting,
-            versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
+        packageName: String?, rows: Int, offset: Int, notificationSorting: Configuration.NotificationSorting,
+        versionHandling: Configuration.VersionHandling, hideDuplicates: Boolean
     ) = getNotificationsSync(
             buildSelectQuery(
                     packageName = packageName,
-                    sorting = sorting,
+                    notificationSorting = notificationSorting,
                     versionHandling = versionHandling,
                     limit = "$offset,$rows",
                     hideDuplicates = hideDuplicates
@@ -122,8 +122,8 @@ abstract class NotificationDao {
     )
 
     fun buildSelectQuery(
-            packageName: String?, sorting: Configuration.Sorting, versionHandling: Configuration.VersionHandling,
-            limit: String?, hideDuplicates: Boolean
+        packageName: String?, notificationSorting: Configuration.NotificationSorting, versionHandling: Configuration.VersionHandling,
+        limit: String?, hideDuplicates: Boolean
     ) = SupportSQLiteQueryBuilder.builder("notifications")
             .apply {
                 val conditions = mutableListOf<String>()
@@ -143,9 +143,9 @@ abstract class NotificationDao {
                     Configuration.VersionHandling.ShowNewestVersionOnly -> conditions.add(("is_oldest_version = 1"))
                 }.apply {/* require handling all paths */}
 
-                orderBy("time " + when (sorting) {
-                    Configuration.Sorting.OldestFirst -> "ASC"
-                    Configuration.Sorting.NewestFirst -> "DESC"
+                orderBy("time " + when (notificationSorting) {
+                    Configuration.NotificationSorting.OldestFirst -> "ASC"
+                    Configuration.NotificationSorting.NewestFirst -> "DESC"
                 })
 
                 if (hideDuplicates) {
@@ -167,8 +167,8 @@ abstract class NotificationDao {
             }
             .create()
 
-    @Query("SELECT DISTINCT package FROM notifications ORDER BY package ASC")
-    abstract fun getAppsWithNotifications(): LiveData<List<AppWithNotification>>
+    @Query("SELECT DISTINCT package, MAX(time) AS last_notification_timestamp FROM notifications GROUP BY package")
+    abstract fun getAppsWithNotificationsUnsorted(): LiveData<List<AppWithNotification>>
 
     @Query("DELETE FROM notifications WHERE package = :packageName")
     abstract fun deleteNotificationsByAppSync(packageName: String)

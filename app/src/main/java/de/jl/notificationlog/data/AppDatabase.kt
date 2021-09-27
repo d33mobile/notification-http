@@ -97,7 +97,7 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                     val queries = mutableListOf<String>()
 
                                     listOf(null, "com.demo").forEach { packageName ->
-                                        listOf(Configuration.Sorting.NewestFirst, Configuration.Sorting.OldestFirst).forEach { sorting ->
+                                        listOf(Configuration.NotificationSorting.NewestFirst, Configuration.NotificationSorting.OldestFirst).forEach { sorting ->
                                             listOf(
                                                     Configuration.VersionHandling.ShowAllVersions,
                                                     Configuration.VersionHandling.ShowNewestVersionOnly,
@@ -106,7 +106,7 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                                 listOf(false, true).forEach { hideDuplicates ->
                                                     queries.add(notification().buildSelectQuery(
                                                             packageName = packageName,
-                                                            sorting = sorting,
+                                                            notificationSorting = sorting,
                                                             versionHandling = versionHandling,
                                                             hideDuplicates = hideDuplicates,
                                                             limit = null

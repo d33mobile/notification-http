@@ -57,7 +57,9 @@
     <string name="settings_search_hint">Search Apps</string>
 
     <!-- sorting -->
-    <string name="sorting_title">Sort</string>
+    <string name="sorting_apps_title">Sort Apps</string>
+    <string name="sorting_notifications_title">Sort Notifications</string>
+    <string name="sort_alphabetically">Alphabetically</string>
     <string name="sort_oldest_first">Oldest first</string>
     <string name="sort_newest_first">Newest first</string>
 

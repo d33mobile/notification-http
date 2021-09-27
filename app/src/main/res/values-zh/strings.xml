@@ -52,7 +52,6 @@
     <string name="settings_search_hint">搜索应用</string>
 
     <!-- sorting -->
-    <string name="sorting_title">排序</string>
     <string name="sort_oldest_first">最老优先</string>
     <string name="sort_newest_first">最新优先</string>
 

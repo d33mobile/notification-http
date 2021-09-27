@@ -52,7 +52,6 @@
     <string name="settings_search_hint">Encontrar os Apps</string>
 
     <!-- sorting -->
-    <string name="sorting_title">Ordenar</string>
     <string name="sort_oldest_first">Primeiro os antigos</string>
     <string name="sort_newest_first">Primeiro os recentes</string>
 

@@ -29,7 +29,7 @@
 
     <item
         android:id="@+id/action_sort"
-        android:title="@string/sorting_title"
+        android:title="@string/sorting_notifications_title"
         app:showAsAction="never" />
 
     <item

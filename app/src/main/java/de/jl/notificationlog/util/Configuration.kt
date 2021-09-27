@@ -8,9 +8,13 @@ class Configuration(context: Application) {
     companion object {
         private const val IS_WHITELIST_MODE = "whitelist_mode"
         private const val INVERTED_APPS_PACKAGE_NAMES = "inverted_app_package_names"
-        private const val SORTING = "sorting"
-        private const val SORT_NEWEST_FIRST = "newest_first"
-        private const val SORT_OLDEST_FIRST = "oldest_first"
+        private const val APP_SORTING = "app_sorting"
+        private const val APP_SORTING_ALPHABETICALLY = "alphabetically"
+        private const val APP_SORTING_NEWEST_FIRST = "newest_first"
+        private const val APP_SORTING_OLDEST_FIRST = "oldest_first"
+        private const val NOTIFICATION_SORTING = "sorting"
+        private const val NOTIFICATION_SORT_NEWEST_FIRST = "newest_first"
+        private const val NOTIFICATION_SORT_OLDEST_FIRST = "oldest_first"
         private const val VERSION_HANDLING = "version_handling"
         private const val VERSION_ALL = "all"
         private const val VERSION_OLDEST = "oldest"
@@ -70,17 +74,34 @@ class Configuration(context: Application) {
                 .apply()
     }
 
-    var sorting: Sorting
-        get() = when (preferences.getString(SORTING, SORT_OLDEST_FIRST)) {
-            SORT_OLDEST_FIRST -> Sorting.OldestFirst
-            SORT_NEWEST_FIRST -> Sorting.NewestFirst
+    var appSorting: AppSorting
+        get() = when(preferences.getString(APP_SORTING, APP_SORTING_ALPHABETICALLY)) {
+            APP_SORTING_ALPHABETICALLY -> AppSorting.Alphabetically
+            APP_SORTING_NEWEST_FIRST -> AppSorting.NewestFirst
+            APP_SORTING_OLDEST_FIRST -> AppSorting.OldestFirst
             else -> throw IllegalArgumentException()
         }
         set(value) {
             preferences.edit()
-                    .putString(SORTING, when (value) {
-                        Sorting.OldestFirst -> SORT_OLDEST_FIRST
-                        Sorting.NewestFirst -> SORT_NEWEST_FIRST
+                .putString(APP_SORTING, when (value) {
+                    AppSorting.Alphabetically -> APP_SORTING_ALPHABETICALLY
+                    AppSorting.NewestFirst -> APP_SORTING_NEWEST_FIRST
+                    AppSorting.OldestFirst -> APP_SORTING_OLDEST_FIRST
+                })
+                .apply()
+        }
+
+    var notificationSorting: NotificationSorting
+        get() = when (preferences.getString(NOTIFICATION_SORTING, NOTIFICATION_SORT_OLDEST_FIRST)) {
+            NOTIFICATION_SORT_OLDEST_FIRST -> NotificationSorting.OldestFirst
+            NOTIFICATION_SORT_NEWEST_FIRST -> NotificationSorting.NewestFirst
+            else -> throw IllegalArgumentException()
+        }
+        set(value) {
+            preferences.edit()
+                    .putString(NOTIFICATION_SORTING, when (value) {
+                        NotificationSorting.OldestFirst -> NOTIFICATION_SORT_OLDEST_FIRST
+                        NotificationSorting.NewestFirst -> NOTIFICATION_SORT_NEWEST_FIRST
                     })
                     .apply()
         }
@@ -134,7 +155,13 @@ class Configuration(context: Application) {
                     .apply()
     }
 
-    enum class Sorting {
+    enum class AppSorting {
+        Alphabetically,
+        NewestFirst,
+        OldestFirst
+    }
+
+    enum class NotificationSorting {
         NewestFirst,
         OldestFirst
     }

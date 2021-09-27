@@ -10,30 +10,30 @@ import androidx.fragment.app.FragmentManager
 import de.jl.notificationlog.R
 import de.jl.notificationlog.util.Configuration
 
-class SortSettingDialogFragment: DialogFragment() {
+class SortNotificationSettingDialogFragment: DialogFragment() {
     companion object {
-        private const val TAG = "SortSettingDialogFragment"
+        private const val TAG = "SortNotificationSettingDialogFragment"
     }
 
     val config: Configuration
-        get() = Configuration.with(context!!)
+        get() = Configuration.with(requireContext())
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!, theme)
-            .setTitle(R.string.sorting_title)
+            .setTitle(R.string.sorting_notifications_title)
             .setSingleChoiceItems(
                     arrayOf(
                             getString(R.string.sort_oldest_first),
                             getString(R.string.sort_newest_first)
                     ),
-                    when (config.sorting) {
-                        Configuration.Sorting.OldestFirst -> 0
-                        Configuration.Sorting.NewestFirst -> 1
+                    when (config.notificationSorting) {
+                        Configuration.NotificationSorting.OldestFirst -> 0
+                        Configuration.NotificationSorting.NewestFirst -> 1
                     },
                     object: DialogInterface.OnClickListener {
                         override fun onClick(dialog: DialogInterface?, item: Int) {
-                            config.sorting = when (item) {
-                                0 -> Configuration.Sorting.OldestFirst
-                                1 -> Configuration.Sorting.NewestFirst
+                            config.notificationSorting = when (item) {
+                                0 -> Configuration.NotificationSorting.OldestFirst
+                                1 -> Configuration.NotificationSorting.NewestFirst
                                 else -> throw IllegalArgumentException()
                             }
 

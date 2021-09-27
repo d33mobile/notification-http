@@ -4,5 +4,7 @@ import androidx.room.ColumnInfo
 
 data class AppWithNotification(
         @ColumnInfo(name = "package")
-        val packageName: String
+        val packageName: String,
+        @ColumnInfo(name = "last_notification_timestamp")
+        val lastNotificationTimestamp: Long
 )

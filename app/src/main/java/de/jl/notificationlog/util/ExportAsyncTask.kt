@@ -32,7 +32,7 @@ class ExportAsyncTask(private val context: Application, private val packageName:
 
     override fun doInBackground(vararg params: Void): Void? {
         val exportAllApps = packageName == AppListModel.ALL_APPS
-        val sorting = Configuration.with(context).sorting
+        val sorting = Configuration.with(context).notificationSorting
         val versionHandling = Configuration.with(context).versionHandling
         val hideDuplicates = Configuration.with(context).hideDuplicates
         val db = AppDatabase.with(context).notification()
