@@ -20,15 +20,15 @@ class OpenNotificationInfoDialogFragment: DialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!, theme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext(), theme)
             .setTitle(R.string.open_notification_info_title)
             .setMessage(R.string.open_notification_info_text)
             .setPositiveButton(R.string.open_notification_info_positive) { _, _ ->
-                Configuration.with(context!!).openNotifications = true
+                Configuration.with(requireContext()).openNotifications = true
 
                 targetFragment?.let { target ->
                     if (target is AppDetailFragment) {
-                        target.openNotificationAfterConfirmation(arguments!!.getLong(EXTRA_SAVED_NOTIFICATION_ID))
+                        target.openNotificationAfterConfirmation(requireArguments().getLong(EXTRA_SAVED_NOTIFICATION_ID))
                     }
                 }
             }

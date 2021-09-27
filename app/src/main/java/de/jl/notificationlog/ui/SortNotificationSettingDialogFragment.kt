@@ -18,7 +18,7 @@ class SortNotificationSettingDialogFragment: DialogFragment() {
     val config: Configuration
         get() = Configuration.with(requireContext())
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!, theme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext(), theme)
             .setTitle(R.string.sorting_notifications_title)
             .setSingleChoiceItems(
                     arrayOf(

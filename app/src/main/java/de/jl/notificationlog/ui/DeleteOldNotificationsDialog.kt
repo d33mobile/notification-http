@@ -17,10 +17,10 @@ class DeleteOldNotificationsDialog: DialogFragment() {
     }
 
     val config: Configuration
-        get() = Configuration.with(context!!)
+        get() = Configuration.with(requireContext())
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context!!, theme)
+        return AlertDialog.Builder(requireContext(), theme)
                 .setTitle(R.string.delete_old_notifications_title)
                 .setSingleChoiceItems(
                         OPTIONS.map { option ->

@@ -3,17 +3,11 @@ package de.jl.notificationlog.ui.appdetail
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.PendingIntent
-import androidx.lifecycle.Observer
-import androidx.paging.LivePagedListBuilder
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.*
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.paging.PagedList
 import com.google.android.material.snackbar.Snackbar
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
@@ -29,6 +23,11 @@ import de.jl.notificationlog.util.PendingIntentHolder
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.lifecycle.*
+import androidx.paging.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * A fragment representing a single App detail screen.
@@ -49,11 +48,10 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         }
     }
 
-    val selectedPackageName: String by lazy { arguments!!.getString(ARG_PACKAGE_NAME)!! }
-    val isLoggingEnabled = MutableLiveData<Boolean>()
-    val isDeduplicationEnabled = MutableLiveData<Boolean>()
-    val pagedList = MutableLiveData<LiveData<PagedList<NotificationItem>>>()
-    val pagedListContent = Transformations.switchMap(pagedList, { it })
+    val selectedPackageName: String by lazy { requireArguments().getString(ARG_PACKAGE_NAME)!! }
+    private val isLoggingEnabled = MutableLiveData<Boolean>()
+    private val isDeduplicationEnabled = MutableLiveData<Boolean>()
+    private val pagedList = MutableLiveData<Pager<Int, NotificationItem>>()
     lateinit var binding: AppDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,24 +63,26 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
     override fun onResume() {
         super.onResume()
 
-        isLoggingEnabled.value = Configuration.with(context!!).shouldLogNotifications(selectedPackageName)
-        isDeduplicationEnabled.value = Configuration.with(context!!).hideDuplicates
+        isLoggingEnabled.value = Configuration.with(requireContext()).shouldLogNotifications(selectedPackageName)
+        isDeduplicationEnabled.value = Configuration.with(requireContext()).hideDuplicates
     }
 
-    fun updatePagedList() {
-        val sorting = Configuration.with(context!!).notificationSorting
-        val versionHandling = Configuration.with(context!!).versionHandling
-        val hideDuplicates = Configuration.with(context!!).hideDuplicates
+    private fun updatePagedList() {
+        val sorting = Configuration.with(requireContext()).notificationSorting
+        val versionHandling = Configuration.with(requireContext()).versionHandling
+        val hideDuplicates = Configuration.with(requireContext()).hideDuplicates
 
-        pagedList.value = LivePagedListBuilder(
-                AppDatabase.with(context!!).notification().getNotifications(
-                        if (selectedPackageName == AppListModel.ALL_APPS) null else selectedPackageName,
-                        sorting, versionHandling, hideDuplicates
-                ), 20
-        ).build()
+        pagedList.value = Pager(
+            PagingConfig(20),
+            null,
+            AppDatabase.with(requireContext()).notification().getNotifications(
+                if (selectedPackageName == AppListModel.ALL_APPS) null else selectedPackageName,
+                sorting, versionHandling, hideDuplicates
+            ).asPagingSourceFactory(Dispatchers.IO)
+        )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = AppDetailBinding.inflate(inflater, container, false)
 
         val adapter = AppDetailAdapter()
@@ -92,18 +92,20 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
 
         updatePagedList()
 
-        pagedListContent.observe(this, Observer {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            pagedList.asFlow().collectLatest { pagedList ->
+                pagedList.flow.collectLatest { data ->
+                    adapter.submitData(data)
+                }
+            }
+        }
 
-            binding.isListEmpty = it != null && it.isEmpty()
-        })
-
-        isLoggingEnabled.observe(this, Observer {
+        isLoggingEnabled.observe(viewLifecycleOwner, Observer {
             binding.loggingDisabled = selectedPackageName != AppListModel.ALL_APPS && !it
         })
 
         binding.recycler.adapter = adapter
-        binding.appTitle = AppsUtil.getAppTitle(selectedPackageName, context!!)
+        binding.appTitle = AppsUtil.getAppTitle(selectedPackageName, requireContext())
 
         return binding.root
     }
@@ -117,7 +119,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
             if (selectedPackageName == AppListModel.ALL_APPS) {
                 isVisible = false
             } else {
-                title = getString(R.string.action_checkbox_enable_logging, AppsUtil.getAppTitle(selectedPackageName, context!!))
+                title = getString(R.string.action_checkbox_enable_logging, AppsUtil.getAppTitle(selectedPackageName, requireContext()))
 
                 isLoggingEnabled.observe(this@AppDetailFragment, Observer {
                     isChecked = it
@@ -126,7 +128,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
                 setOnMenuItemClickListener {
                     val newValue = !it.isChecked
 
-                    Configuration.with(context!!).setShouldLogNotifications(selectedPackageName, newValue)
+                    Configuration.with(requireContext()).setShouldLogNotifications(selectedPackageName, newValue)
                     isLoggingEnabled.value = newValue
 
                     true
@@ -142,7 +144,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
             setOnMenuItemClickListener {
                 val newValue = !it.isChecked
 
-                Configuration.with(context!!).hideDuplicates = newValue
+                Configuration.with(requireContext()).hideDuplicates = newValue
                 isDeduplicationEnabled.value = newValue
 
                 updatePagedList()
@@ -159,21 +161,21 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
             true
         }
         item.itemId == R.id.action_clear_app -> {
-            ClearDialogFragment.newInstance(selectedPackageName).show(fragmentManager!!)
+            ClearDialogFragment.newInstance(selectedPackageName).show(parentFragmentManager)
 
             true
         }
         item.itemId == R.id.action_sort -> {
             SortNotificationSettingDialogFragment().apply {
                 setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_CONFIG)
-            }.show(fragmentManager!!)
+            }.show(parentFragmentManager)
 
             true
         }
         item.itemId == R.id.action_version -> {
             VersionHandlingSettingDialogFragment().apply {
                 setTargetFragment(this@AppDetailFragment, REQUEST_CHANGE_CONFIG)
-            }.show(fragmentManager!!)
+            }.show(parentFragmentManager)
 
             true
         }
@@ -195,7 +197,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
         when(requestCode) {
             REQUEST_CHOSE_EXPORT_PATH -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    ExportAsyncTask(activity!!.application, selectedPackageName, data!!.data!!).execute()
+                    ExportAsyncTask(requireActivity().application, selectedPackageName, data!!.data!!).execute()
                 }
             }
             REQUEST_CHANGE_CONFIG -> {
@@ -206,7 +208,7 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
     }
 
     override fun onNotificationClicked(savedNotificationId: Long) {
-        if (Configuration.with(context!!).openNotifications) {
+        if (Configuration.with(requireContext()).openNotifications) {
             openNotificationAfterConfirmation(savedNotificationId)
         } else {
             OpenNotificationInfoDialogFragment
@@ -214,17 +216,17 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
                     .apply {
                         setTargetFragment(this@AppDetailFragment, 0)
                     }
-                    .show(fragmentManager!!)
+                    .show(parentFragmentManager)
         }
     }
 
     override fun onNotificationLongClicked(item: NotificationItem): Boolean {
         Snackbar.make(binding.recycler, R.string.copy_to_clipboard_toast, Snackbar.LENGTH_SHORT).show()
 
-        (context!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
+        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
                 ClipData.newPlainText(
                         "notification",
-                        "${AppDetailAdapter.formatTime(item.time, context!!)}: ${item.title} / ${item.text}"
+                        "${AppDetailAdapter.formatTime(item.time, requireContext())}: ${item.title} / ${item.text}"
                 )
         )
 

@@ -35,7 +35,7 @@ class SettingsActivity : CheckAuthActivity() {
         }
 
         val adapter = CheckableAppListAdapter()
-        val apps = AppsUtil.getAllApps(this).sortedBy { it.title.toLowerCase() }
+        val apps = AppsUtil.getAllApps(this).sortedBy { it.title.lowercase() }
         val searchTerm = MutableLiveData<String>().apply { value = search.text.toString() }
 
         search.addTextChangedListener(object: TextWatcher {

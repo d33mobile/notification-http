@@ -16,9 +16,9 @@ class VersionHandlingSettingDialogFragment: DialogFragment() {
     }
 
     val config: Configuration
-        get() = Configuration.with(context!!)
+        get() = Configuration.with(requireContext())
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!, theme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(requireContext(), theme)
             .setTitle(R.string.version_handling_title)
             .setSingleChoiceItems(
                     arrayOf(

@@ -22,7 +22,7 @@ class ClearDialogFragment : DialogFragment() {
         }
     }
 
-    private val packageName: String by lazy { arguments!!.getString(ARGUMENT_PACKAGE)!! }
+    private val packageName: String by lazy { requireArguments().getString(ARGUMENT_PACKAGE)!! }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity)
@@ -30,13 +30,13 @@ class ClearDialogFragment : DialogFragment() {
                         if (packageName == AppListModel.ALL_APPS)
                             getString(R.string.dialog_clear_all_title)
                         else
-                            getString(R.string.dialog_clear_app_title, AppsUtil.getAppTitle(packageName, context!!))
+                            getString(R.string.dialog_clear_app_title, AppsUtil.getAppTitle(packageName, requireContext()))
                 )
                 .setMessage(R.string.dialog_clear_text)
                 .setPositiveButton(R.string.dialog_clear_positive) { _, _ ->
-                    val activity = activity!!
+                    val activity = requireActivity()
 
-                    val database = AppDatabase.with(context!!)
+                    val database = AppDatabase.with(requireContext())
 
                     Thread {
                         if (packageName == AppListModel.ALL_APPS) {

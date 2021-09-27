@@ -1,18 +1,18 @@
 package de.jl.notificationlog.ui.appdetail
 
 import android.content.Context
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.databinding.NotificationItemBinding
 import de.jl.notificationlog.ui.AppsUtil
 import kotlin.properties.Delegates
 
-class AppDetailAdapter: PagedListAdapter<NotificationItem, NotificationHolder>(
+class AppDetailAdapter: PagingDataAdapter<NotificationItem, NotificationHolder>(
         object: DiffUtil.ItemCallback<NotificationItem>() {
             override fun areContentsTheSame(p0: NotificationItem, p1: NotificationItem) = p0 == p1
             override fun areItemsTheSame(p0: NotificationItem, p1: NotificationItem) = p0.id == p1.id
