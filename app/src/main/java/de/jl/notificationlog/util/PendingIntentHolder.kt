@@ -49,7 +49,7 @@ object PendingIntentHolder {
                     Log.d(LOG_TAG, "clean up cache")
                 }
 
-                val oldestCachedIntentId = cachedIntents.keys.min()
+                val oldestCachedIntentId = cachedIntents.keys.minOrNull()
                 cachedIntents.remove(oldestCachedIntentId)
 
                 // remove referencing items
