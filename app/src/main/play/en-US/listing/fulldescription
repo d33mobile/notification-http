@@ -1,3 +1,3 @@
 NotificationLog logs the system notifications locally and allows to view, export and delete all of them or all of one App.
 
-It uses the notification access and the list of the installed Apps for this.
+It uses the notification access and the list of the installed Apps for this. At older Android versions which do not have the notification access permission, an accessibility service is used instead.

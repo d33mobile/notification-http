@@ -1,3 +1,3 @@
 NotificationLog protokolliert die Systembenachrichtigungen lokal und ermöglicht das Anzeigen, Exportieren und Löschen von allen Benachrichtigungen oder allen Benachrichtigungen einer App.
 
-Dafür wird der Benachrichtigungszugriff und die Liste der installierten Apps verwendet.
+Dafür wird der Benachrichtigungszugriff und die Liste der installierten Apps verwendet. Bei älteren Android-Versionen, die keine Benachrichtigungszugriffsberechtigung haben, wird stattdessen eine Bedienhilfe verwendet.
