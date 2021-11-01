@@ -103,7 +103,7 @@ class AppListFragment : Fragment() {
             }
 
             override fun onShowPermissionViewClicked() {
-                ServiceCheckUtil.enableService(context!!)
+                ServiceCheckUtil.enableService(requireActivity())
             }
 
             override fun onAllAppsClicked() {

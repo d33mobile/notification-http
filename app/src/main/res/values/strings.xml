@@ -27,6 +27,18 @@
     </string>
     <string name="card_enable_service_button">Allow</string>
 
+    <!-- accessibility service dialog -->
+    <string name="dialog_accessibility_service_title">Accessibility Service</string>
+    <string name="dialog_accessibility_service_text">NotificationLog
+        would use the notification access permission if your device would
+        support it. But your device does not support it. NotificationLog
+        can use the Accessibility Service permission instead. It only uses it
+        to read the notifications and save them - acoording to your settings -
+        at your device.
+    </string>
+    <string name="dialog_accessibility_service_yes">Grant permission</string>
+    <string name="dialog_accessibility_service_no">Cancel</string>
+
     <!-- card which informs that logging was disabled for one App -->
     <string name="card_logging_disabled_title">Logging was disabled for %s</string>
     <string name="card_logging_disabled_text">You can change that in the menu</string>

@@ -24,6 +24,18 @@
     </string>
     <string name="card_enable_service_button">Erlauben</string>
 
+    <!-- accessibility service dialog -->
+    <string name="dialog_accessibility_service_title">Bedienhilfe</string>
+    <string name="dialog_accessibility_service_text">NotificationLog
+        würde den Benachrichtigungszugriff verwenden, wenn es ihn bei dieser
+        Android-Version gäbe. Da es ihn hier nicht gibt, kann stattdessen
+        die Bedienhilfe-Berechtigung verwendet werden. NotificationLog verwendet
+        diesen nur, um die angezeigten Benachrichtigungen abzurufen und - abhängig von
+        deinen Einstellungen - auf deinem Gerät zu speichern.
+    </string>
+    <string name="dialog_accessibility_service_yes">Berechtigung erteilen</string>
+    <string name="dialog_accessibility_service_no">Abbrechen</string>
+
     <!-- card which informs that logging was disabled for one App -->
     <string name="card_logging_disabled_title">Protokollierung von %s wurde deaktiviert</string>
     <string name="card_logging_disabled_text">Sie können das im Menü andern</string>

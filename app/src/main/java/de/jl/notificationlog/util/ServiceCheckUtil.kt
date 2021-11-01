@@ -3,9 +3,11 @@ package de.jl.notificationlog.util
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.fragment.app.FragmentActivity
 import de.jl.notificationlog.R
 import de.jl.notificationlog.service.AccessibilityService
 import de.jl.notificationlog.service.NotificationListenerService
+import de.jl.notificationlog.ui.permission.RequestAccessibilityServiceDialogFragment
 
 object ServiceCheckUtil {
     private const val NOTIFICATION_SERVICES_SPLITTER = ":"
@@ -42,16 +44,16 @@ object ServiceCheckUtil {
         return false
     }
 
-    fun enableService(context: Context) {
-        if (context.resources.getBoolean(R.bool.enable_notification_listener_service)) {
-            enableNotificationListenerService(context)
+    fun enableService(activity: FragmentActivity) {
+        if (activity.resources.getBoolean(R.bool.enable_notification_listener_service)) {
+            enableNotificationListenerService(activity)
         } else {
-            enableAccessibilityService(context)
+            enableAccessibilityService(activity)
         }
     }
 
-    private fun enableAccessibilityService(context: Context) {
-        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+    private fun enableAccessibilityService(activity: FragmentActivity) {
+        RequestAccessibilityServiceDialogFragment.newInstance().show(activity.supportFragmentManager)
     }
 
     private fun enableNotificationListenerService(context: Context) {
