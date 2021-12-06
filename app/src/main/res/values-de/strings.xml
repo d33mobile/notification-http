@@ -68,8 +68,8 @@
     <string name="sorting_apps_title">App-Sortierung</string>
     <string name="sorting_notifications_title">Benachrichtigungs-Sortierung</string>
     <string name="sort_alphabetically">alphabetisch</string>
-    <string name="sort_oldest_first">ältestes zuerst</string>
-    <string name="sort_newest_first">neustes zuerst</string>
+    <string name="sort_oldest_first">älteste zuerst</string>
+    <string name="sort_newest_first">neuste zuerst</string>
 
     <string name="version_handling_title">Benachrichtigungsupdates</string>
     <string name="version_handling_all">alle Versionen anzeigen</string>
