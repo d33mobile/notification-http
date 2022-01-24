@@ -8,5 +8,4 @@ NotificationLog is an Android App which logs the notifications (locally) and all
 
 ## Download
 
-- <https://play.google.com/store/apps/details?id=de.jl.notificationlog>
 - <https://f-droid.org/de/packages/de.jl.notificationlog/>
