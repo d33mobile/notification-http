@@ -10,7 +10,6 @@ import de.jl.notificationlog.ui.AppListActivity
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.CheckAuthActivity
 import de.jl.notificationlog.ui.applist.AppListModel
-import kotlinx.android.synthetic.main.activity_app_detail.*
 
 /**
  * An activity representing a single App detail screen. This
@@ -31,7 +30,7 @@ class AppDetailActivity : CheckAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_detail)
-        setSupportActionBar(detail_toolbar)
+        setSupportActionBar(findViewById(R.id.detail_toolbar))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

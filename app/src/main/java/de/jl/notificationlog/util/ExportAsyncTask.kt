@@ -7,7 +7,6 @@ import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import de.jl.notificationlog.BuildConfig
 import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.ui.AppsUtil
@@ -88,10 +87,6 @@ class ExportAsyncTask(private val context: Application, private val packageName:
                 Toast.makeText(context, R.string.export_done, Toast.LENGTH_SHORT).show()
             }
         } catch (ex: Exception) {
-            if (BuildConfig.DEBUG) {
-                Log.d(LOG_TAG, "export failed", ex)
-            }
-
             handler.post {
                 Toast.makeText(context, R.string.export_error, Toast.LENGTH_SHORT).show()
             }

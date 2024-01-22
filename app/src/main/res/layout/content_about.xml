@@ -1,39 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.about.AboutActivity"
-    tools:showIn="@layout/activity_about">
-
-    <ScrollView
-        android:id="@+id/scroll"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:padding="8dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".ui.about.AboutActivity"
+        tools:showIn="@layout/activity_about">
 
-            <androidx.cardview.widget.CardView
-                app:cardUseCompatPadding="true"
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:padding="8dp"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="horizontal"
+
+                <androidx.cardview.widget.CardView
+                    app:cardUseCompatPadding="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <ImageView
+                        <ImageView
+                            android:padding="8dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@mipmap/ic_launcher"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp" />
+
+                        <LinearLayout
+                            android:padding="8dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:textAppearance="?android:textAppearanceLarge"
+                                android:text="@string/app_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:text="@string/about_version"
+                                android:id="@+id/version"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    app:cardUseCompatPadding="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:padding="8dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@mipmap/ic_launcher"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <TextView
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:text="@string/about_source_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/source_code_link"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:text="@string/about_source_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardUseCompatPadding="true">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:text="@string/about_developer_key_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:text="@string/about_developer_key_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    app:cardUseCompatPadding="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <LinearLayout
                         android:padding="8dp"
                         android:orientation="vertical"
@@ -42,124 +122,47 @@
 
                         <TextView
                             android:textAppearance="?android:textAppearanceLarge"
-                            android:text="@string/app_name"
+                            android:text="@string/about_libraries"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
                         <TextView
                             android:textAppearance="?android:textAppearanceMedium"
-                            android:text="@string/about_version"
-                            android:id="@+id/version"
+                            android:text="@string/contained_libraries"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                app:cardUseCompatPadding="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="8dp"
+                <androidx.cardview.widget.CardView
+                    app:cardUseCompatPadding="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <TextView
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="@string/about_source_title"
+                    <LinearLayout
+                        android:padding="8dp"
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/source_code_link"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="@string/about_source_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        <TextView
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:text="@string/about_license"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:id="@+id/license_text"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:text="@string/license"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardUseCompatPadding="true">
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp">
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="@string/about_developer_key_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+            </LinearLayout>
+        </ScrollView>
 
-                    <TextView
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="@string/about_developer_key_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                app:cardUseCompatPadding="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:padding="8dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="@string/about_libraries"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="@string/contained_libraries"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                app:cardUseCompatPadding="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:padding="8dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:text="@string/about_license"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/license_text"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:text="@string/license"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

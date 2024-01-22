@@ -4,24 +4,22 @@ import android.app.Activity
 import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 
-import de.jl.notificationlog.R
 import de.jl.notificationlog.data.AppDatabase
+import de.jl.notificationlog.databinding.FragmentAppListBinding
 import de.jl.notificationlog.livedata.ignoreUnchanged
-import de.jl.notificationlog.livedata.map
-import de.jl.notificationlog.livedata.switchMap
 import de.jl.notificationlog.ui.AppListActivity
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.SortAppsSettingDialogFragment
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.ServiceCheckUtil
-import kotlinx.android.synthetic.main.fragment_app_list.*
 
 class AppListFragment : Fragment() {
     companion object {
@@ -86,11 +84,7 @@ class AppListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_app_list, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentAppListBinding.inflate(inflater, container, false)
 
         val adapter = AppListAdapter()
 
@@ -111,7 +105,9 @@ class AppListFragment : Fragment() {
             }
         }
 
-        recycler.adapter = adapter
+        binding.recycler.adapter = adapter
+
+        return binding.root
     }
 
     fun showSortSetting() {
@@ -121,6 +117,7 @@ class AppListFragment : Fragment() {
             }.show(parentFragmentManager)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SORT_SETTING && resultCode == Activity.RESULT_OK) {
             appSorting.value = Configuration.with(requireContext()).appSorting

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import de.jl.notificationlog.R
 import de.jl.notificationlog.ui.about.AboutActivity
 import de.jl.notificationlog.ui.appdetail.AppDetailActivity
@@ -13,9 +14,6 @@ import de.jl.notificationlog.ui.appdetail.AppDetailFragment
 import de.jl.notificationlog.ui.applist.AppListFragment
 import de.jl.notificationlog.ui.applist.AppListModel
 import de.jl.notificationlog.ui.settings.SettingsActivity
-import de.jl.notificationlog.util.Configuration
-import kotlinx.android.synthetic.main.activity_app_list.*
-import kotlinx.android.synthetic.main.app_list.*
 
 /**
  * An activity representing a list of Apps with Notifications. This activity
@@ -36,7 +34,7 @@ class AppListActivity : CheckAuthActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_list)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -46,7 +44,7 @@ class AppListActivity : CheckAuthActivity() {
             model.selectedPackageName.value = savedInstanceState.getString(STATE_SELECTED_PACKAGE)
         }
 
-        model.isTwoPaneMode.value = app_detail_container != null
+        model.isTwoPaneMode.value = findViewById<View?>(R.id.app_detail_container) != null
 
         if (model.isTwoPaneMode.value!!) {
             val fragment = supportFragmentManager.findFragmentById(R.id.app_detail_container) as AppDetailFragment?

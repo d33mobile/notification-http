@@ -2,7 +2,6 @@ package de.jl.notificationlog.util
 
 import android.app.PendingIntent
 import android.util.Log
-import de.jl.notificationlog.BuildConfig
 
 object PendingIntentHolder {
     private const val LOG_TAG = "PendingIntentHolder"
@@ -28,16 +27,8 @@ object PendingIntentHolder {
         val oldCachedIntentId = cachedIntents.entries.find { it.value == contentIntent }?.key
 
         if (oldCachedIntentId != null) {
-            if (BuildConfig.DEBUG) {
-                Log.d(LOG_TAG, "got intent already")
-            }
-
             savedNotificationIdToCachedIntent[savedNotificationId] = oldCachedIntentId
         } else {
-            if (BuildConfig.DEBUG) {
-                Log.d(LOG_TAG, "add new intent")
-            }
-
             // add intent
             val newCachedIntentId = nextCachedIntentId++
             cachedIntents[newCachedIntentId] = contentIntent
@@ -45,10 +36,6 @@ object PendingIntentHolder {
 
             // eventually remove old intent
             if (cachedIntents.size > CACHE_SIZE) {
-                if (BuildConfig.DEBUG) {
-                    Log.d(LOG_TAG, "clean up cache")
-                }
-
                 val oldestCachedIntentId = cachedIntents.keys.minOrNull()
                 cachedIntents.remove(oldestCachedIntentId)
 

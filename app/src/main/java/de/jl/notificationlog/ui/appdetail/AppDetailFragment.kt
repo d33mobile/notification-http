@@ -2,6 +2,7 @@ package de.jl.notificationlog.ui.appdetail
 
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
@@ -23,6 +24,8 @@ import de.jl.notificationlog.util.PendingIntentHolder
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import androidx.lifecycle.*
 import androidx.paging.*
 import kotlinx.coroutines.Dispatchers
@@ -246,7 +249,11 @@ class AppDetailFragment : Fragment(), AppDetailAdapterListener {
             false
         } else {
             try {
-                pendingIntent.send()
+                if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) pendingIntent.send(
+                    ActivityOptions.makeBasic().setPendingIntentBackgroundActivityStartMode(
+                        ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+                    ).toBundle()
+                ) else pendingIntent.send()
 
                 true
             } catch (ex: PendingIntent.CanceledException) {

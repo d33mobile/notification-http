@@ -7,26 +7,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.jl.notificationlog.R
+import de.jl.notificationlog.databinding.ActivitySettingsBinding
 import de.jl.notificationlog.ui.App
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.CheckAuthActivity
-
-import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.android.synthetic.main.content_settings.*
 
 class SettingsActivity : CheckAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_settings)
-        setSupportActionBar(toolbar)
+        val binding = ActivitySettingsBinding.inflate(layoutInflater).also { setContentView(it.root) }
 
-        mode_radio_group.check(when (configuration.isWhitelistMode) {
+        setSupportActionBar(binding.toolbar)
+
+        binding.content.modeRadioGroup.check(when (configuration.isWhitelistMode) {
             true -> R.id.mode_whitelist
             false -> R.id.mode_blacklist
         })
 
-        mode_radio_group.setOnCheckedChangeListener { _, id ->
+        binding.content.modeRadioGroup.setOnCheckedChangeListener { _, id ->
             configuration.isWhitelistMode = when (id) {
                 R.id.mode_whitelist -> true
                 R.id.mode_blacklist -> false
@@ -36,11 +35,11 @@ class SettingsActivity : CheckAuthActivity() {
 
         val adapter = CheckableAppListAdapter()
         val apps = AppsUtil.getAllApps(this).sortedBy { it.title.lowercase() }
-        val searchTerm = MutableLiveData<String>().apply { value = search.text.toString() }
+        val searchTerm = MutableLiveData<String>().apply { value = binding.content.search.text.toString() }
 
-        search.addTextChangedListener(object: TextWatcher {
+        binding.content.search.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                searchTerm.value = search.text.toString()
+                searchTerm.value = binding.content.search.text.toString()
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -52,8 +51,8 @@ class SettingsActivity : CheckAuthActivity() {
             }
         })
 
-        recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = adapter
+        binding.content.recycler.layoutManager = LinearLayoutManager(this)
+        binding.content.recycler.adapter = adapter
 
         adapter.checkedPackageNames = configuration.invertedApps
         searchTerm.observe(this, Observer { term ->

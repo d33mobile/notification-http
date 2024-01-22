@@ -5,11 +5,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import android.content.Context
-import android.util.Log
-import de.jl.notificationlog.BuildConfig
 import de.jl.notificationlog.data.item.ActiveNotificationItem
 import de.jl.notificationlog.data.item.NotificationItem
-import de.jl.notificationlog.util.Configuration
 
 @androidx.room.Database(
         version = 6,
@@ -91,50 +88,7 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         database.execSQL("CREATE INDEX `notifications_index_app_duplicate_group` ON `notifications` (`package`, `duplicate_group_id`)")
                                     }
                                 }
-                        ).build().apply {
-                            if (BuildConfig.DEBUG) {
-                                Thread {
-                                    val queries = mutableListOf<String>()
-
-                                    listOf(null, "com.demo").forEach { packageName ->
-                                        listOf(Configuration.NotificationSorting.NewestFirst, Configuration.NotificationSorting.OldestFirst).forEach { sorting ->
-                                            listOf(
-                                                    Configuration.VersionHandling.ShowAllVersions,
-                                                    Configuration.VersionHandling.ShowNewestVersionOnly,
-                                                    Configuration.VersionHandling.ShowOldestVersionOnly
-                                            ).forEach { versionHandling ->
-                                                listOf(false, true).forEach { hideDuplicates ->
-                                                    queries.add(notification().buildSelectQuery(
-                                                            packageName = packageName,
-                                                            notificationSorting = sorting,
-                                                            versionHandling = versionHandling,
-                                                            hideDuplicates = hideDuplicates,
-                                                            limit = null
-                                                    ).sql.replace("?", "'com.demo'"))
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    queries.forEach { query ->
-                                        Log.d(LOG_TAG, "-")
-                                        Log.d(LOG_TAG, "--------------------")
-                                        Log.d(LOG_TAG, "-")
-                                        Log.d(LOG_TAG, query)
-
-                                        query("EXPLAIN QUERY PLAN $query", null).use { result ->
-                                            Log.d(LOG_TAG, result.columnNames.joinToString(separator = "|"))
-
-                                            if (result.moveToFirst()) {
-                                                do {
-                                                    Log.d(LOG_TAG, (0 until result.columnCount).map { result.getString(it) }.joinToString(separator = "|"))
-                                                } while (result.moveToNext())
-                                            }
-                                        }
-                                    }
-                                }.start()
-                            }
-                        }
+                        ).build()
                     }
                 }
             }
