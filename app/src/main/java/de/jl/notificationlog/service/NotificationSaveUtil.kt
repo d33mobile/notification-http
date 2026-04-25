@@ -2,9 +2,11 @@ package de.jl.notificationlog.service
 
 import android.annotation.TargetApi
 import android.app.Notification
+import android.app.Notification.FLAG_FOREGROUND_SERVICE
 import android.app.Notification.FLAG_ONGOING_EVENT
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.service.notification.StatusBarNotification
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.item.ActiveNotificationItem
@@ -157,14 +159,21 @@ object NotificationSaveUtil {
 
     /**
      * When `webhookSkipOngoing` is set (default), suppress webhook delivery for notifications
-     * that an app marked as "ongoing" (foreground service heartbeats: download progress,
-     * step counters, music players, torrent throughput…). These tick many times per second
-     * and would otherwise spam the webhook endpoint. The notification still goes into the
-     * local log — only HTTP delivery is skipped.
+     * that an app marked as "ongoing" or that the system marked as belonging to a foreground
+     * service. These tick many times per second (download progress, step counters, music
+     * players, torrent throughput, voice recorders…) and would otherwise spam the webhook.
+     * The notification still goes into the local log — only HTTP delivery is skipped.
+     *
+     * We OR both flags because some apps call startForeground() without setOngoing(true), so
+     * only FLAG_FOREGROUND_SERVICE ends up set; conversely setOngoing(true) without a
+     * foreground service only sets FLAG_ONGOING_EVENT.
      */
     private fun shouldSkipForWebhook(notification: Notification, config: Configuration): Boolean {
         if (!config.webhookSkipOngoing) return false
-        return (notification.flags and FLAG_ONGOING_EVENT) != 0
+        val mask = FLAG_ONGOING_EVENT or FLAG_FOREGROUND_SERVICE
+        val skip = (notification.flags and mask) != 0
+        if (skip) Log.d("NotificationSaveUtil", "skip-webhook (flags=0x${notification.flags.toString(16)})")
+        return skip
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
