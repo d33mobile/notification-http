@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.item.NotificationItem
+import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.util.Configuration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -74,7 +75,7 @@ class WebhookWorker(
                 connectTimeout = 15_000
                 readTimeout = 30_000
                 setRequestProperty("Content-Type", "text/plain; charset=utf-8")
-                setRequestProperty("Title", encodeHeader(item.title.ifBlank { item.packageName }))
+                setRequestProperty("Title", encodeHeader(buildTitle(item)))
                 setRequestProperty("Tags", encodeHeader(item.packageName))
                 if (bearerToken.isNotBlank()) {
                     setRequestProperty("Authorization", "Bearer $bearerToken")
@@ -102,6 +103,23 @@ class WebhookWorker(
             Outcome.ClientError
         } finally {
             conn?.disconnect()
+        }
+    }
+
+    /**
+     * Compose the Title sent to the webhook: `<app-label>: <notification-title>`. The app label
+     * (resolved via PackageManager) is prepended so subscribers know which app the notification
+     * came from — `Tags` already carries the package name for automation/grepping. Falls back
+     * to bare title when the notification's title is itself the label, and to packageName when
+     * the app is no longer installed.
+     */
+    private fun buildTitle(item: NotificationItem): String {
+        val label = AppsUtil.getAppTitle(item.packageName, applicationContext)
+        val title = item.title.trim()
+        return when {
+            title.isBlank() -> label
+            title == label -> label
+            else -> "$label: $title"
         }
     }
 

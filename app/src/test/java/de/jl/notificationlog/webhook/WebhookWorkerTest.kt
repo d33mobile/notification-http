@@ -110,6 +110,14 @@ class WebhookWorkerTest {
     private fun runWorker(): ListenableWorker.Result =
             runBlocking { TestListenableWorkerBuilder<WebhookWorker>(context).build().doWork() }
 
+    /** Decode the Title header back to plain text whether it was sent as RFC 2047 or verbatim. */
+    private fun decodeTitle(value: String?): String? {
+        if (value == null) return null
+        val match = Regex("""^=\?utf-8\?B\?([A-Za-z0-9+/=]+)\?=$""").matchEntire(value) ?: return value
+        return String(android.util.Base64.decode(match.groupValues[1], android.util.Base64.NO_WRAP),
+                Charsets.UTF_8)
+    }
+
     @Test
     fun `2xx success deletes pending row and sends headers + body`() {
         enable(server.url("/topic").toString(), token = "secret")
@@ -123,7 +131,9 @@ class WebhookWorkerTest {
         val req: RecordedRequest = server.takeRequest(2, TimeUnit.SECONDS)!!
         assertEquals("POST", req.method)
         assertEquals("/topic", req.path)
-        assertEquals("hello", req.getHeader("Title"))
+        // Robolectric has no PackageManager entry for "com.example.app" so the label
+        // resolution falls back to the package name itself, prepended to the title.
+        assertEquals("com.example.app: hello", decodeTitle(req.getHeader("Title")))
         assertEquals("com.example.app", req.getHeader("Tags"))
         assertEquals("Bearer secret", req.getHeader("Authorization"))
         assertEquals("world", req.body.readUtf8())
@@ -174,8 +184,8 @@ class WebhookWorkerTest {
 
         runWorker()
 
-        val titles = (1..3).map { server.takeRequest(2, TimeUnit.SECONDS)!!.getHeader("Title") }
-        assertEquals(listOf("first", "second", "third"), titles)
+        val titles = (1..3).map { decodeTitle(server.takeRequest(2, TimeUnit.SECONDS)!!.getHeader("Title")) }
+        assertEquals(listOf("com.example.app: first", "com.example.app: second", "com.example.app: third"), titles)
         assertEquals(0, db.pendingWebhookDelivery().countSync())
     }
 
@@ -241,9 +251,8 @@ class WebhookWorkerTest {
 
         runWorker()
         val req = server.takeRequest(2, TimeUnit.SECONDS)!!
-        // RFC 2047 encoded-word: =?utf-8?B?<base64 of UTF-8 bytes>?=
-        val expected = "=?utf-8?B?ZHppYcWCYSDFvMOzxYLEhw==?="
-        assertEquals(expected, req.getHeader("Title"))
+        // RFC 2047 encoded-word: =?utf-8?B?<base64 of UTF-8 bytes>?=  (label-prefixed)
+        assertEquals("com.example.app: działa żółć", decodeTitle(req.getHeader("Title")))
         assertEquals("ascii body", req.body.readUtf8())
     }
 
@@ -255,7 +264,7 @@ class WebhookWorkerTest {
 
         runWorker()
         val req = server.takeRequest(2, TimeUnit.SECONDS)!!
-        assertEquals("Plain title", req.getHeader("Title"))
+        assertEquals("com.example.app: Plain title", req.getHeader("Title"))
     }
 
     @Test
@@ -266,7 +275,19 @@ class WebhookWorkerTest {
 
         runWorker()
         val req = server.takeRequest(2, TimeUnit.SECONDS)!!
-        assertEquals("line1  line2", req.getHeader("Title"))
+        assertEquals("com.example.app: line1  line2", req.getHeader("Title"))
+    }
+
+    @Test
+    fun `blank notification title uses just the app label`() {
+        enable(server.url("/t").toString())
+        insertNotification(title = "", text = "body only")
+        server.enqueue(MockResponse().setResponseCode(200))
+
+        runWorker()
+        val req = server.takeRequest(2, TimeUnit.SECONDS)!!
+        assertEquals("com.example.app", decodeTitle(req.getHeader("Title")))
+        assertEquals("body only", req.body.readUtf8())
     }
 
     @Test
