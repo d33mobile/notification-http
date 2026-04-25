@@ -44,6 +44,11 @@ class SettingsActivity : CheckAuthActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+        binding.content.webhookSkipOngoingSwitch.isChecked = configuration.webhookSkipOngoing
+        binding.content.webhookSkipOngoingSwitch.setOnCheckedChangeListener { _, checked ->
+            configuration.webhookSkipOngoing = checked
+        }
+
         binding.content.modeRadioGroup.check(when (configuration.isWhitelistMode) {
             true -> R.id.mode_whitelist
             false -> R.id.mode_blacklist

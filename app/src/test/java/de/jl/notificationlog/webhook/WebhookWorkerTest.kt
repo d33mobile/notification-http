@@ -233,6 +233,43 @@ class WebhookWorkerTest {
     }
 
     @Test
+    fun `non-ASCII title is RFC 2047 base64 encoded`() {
+        enable(server.url("/t").toString())
+        // "działa" — Polish ł + ó-style chars
+        insertNotification(title = "działa żółć", text = "ascii body")
+        server.enqueue(MockResponse().setResponseCode(200))
+
+        runWorker()
+        val req = server.takeRequest(2, TimeUnit.SECONDS)!!
+        // RFC 2047 encoded-word: =?utf-8?B?<base64 of UTF-8 bytes>?=
+        val expected = "=?utf-8?B?ZHppYcWCYSDFvMOzxYLEhw==?="
+        assertEquals(expected, req.getHeader("Title"))
+        assertEquals("ascii body", req.body.readUtf8())
+    }
+
+    @Test
+    fun `pure ASCII title passes through verbatim (no encoded-word wrapper)`() {
+        enable(server.url("/t").toString())
+        insertNotification(title = "Plain title", text = "x")
+        server.enqueue(MockResponse().setResponseCode(200))
+
+        runWorker()
+        val req = server.takeRequest(2, TimeUnit.SECONDS)!!
+        assertEquals("Plain title", req.getHeader("Title"))
+    }
+
+    @Test
+    fun `CR LF in title is stripped to spaces`() {
+        enable(server.url("/t").toString())
+        insertNotification(title = "line1\r\nline2", text = "x")
+        server.enqueue(MockResponse().setResponseCode(200))
+
+        runWorker()
+        val req = server.takeRequest(2, TimeUnit.SECONDS)!!
+        assertEquals("line1  line2", req.getHeader("Title"))
+    }
+
+    @Test
     fun `blank URL is no-op success`() {
         de.jl.notificationlog.util.Configuration.with(context).apply {
             webhookEnabled = true

@@ -2,6 +2,7 @@ package de.jl.notificationlog.service
 
 import android.annotation.TargetApi
 import android.app.Notification
+import android.app.Notification.FLAG_ONGOING_EVENT
 import android.content.Context
 import android.os.Build
 import android.service.notification.StatusBarNotification
@@ -24,7 +25,9 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification, context)
         val database = AppDatabase.with(context)
-        val webhookEnabled = Configuration.with(context).webhookEnabled
+        val config = Configuration.with(context)
+        val webhookEnabled = config.webhookEnabled
+        val webhookEligible = webhookEnabled && !shouldSkipForWebhook(notification, config)
 
         saveThread.submit {
             database.runInTransaction {
@@ -40,7 +43,7 @@ object NotificationSaveUtil {
                         isNewestVersion = true
                 )
 
-                if (webhookEnabled) {
+                if (webhookEligible) {
                     database.pendingWebhookDelivery().enqueueSync(notificationId)
                 }
 
@@ -51,7 +54,7 @@ object NotificationSaveUtil {
                 )
             }
 
-            if (webhookEnabled) WebhookConfig.enqueue(context)
+            if (webhookEligible) WebhookConfig.enqueue(context)
         }
     }
 
@@ -63,7 +66,9 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification.notification, context)
         val database = AppDatabase.with(context)
-        val webhookEnabled = Configuration.with(context).webhookEnabled
+        val config = Configuration.with(context)
+        val webhookEnabled = config.webhookEnabled
+        val webhookEligible = webhookEnabled && !shouldSkipForWebhook(notification.notification, config)
 
         saveThread.submit {
             database.runInTransaction {
@@ -99,7 +104,7 @@ object NotificationSaveUtil {
                             )
                     )
 
-                    if (webhookEnabled) {
+                    if (webhookEligible) {
                         database.pendingWebhookDelivery().enqueueSync(notificationId)
                     }
 
@@ -134,7 +139,7 @@ object NotificationSaveUtil {
                             lastNotificationId = notificationId
                     )
 
-                    if (webhookEnabled) {
+                    if (webhookEligible) {
                         database.pendingWebhookDelivery().enqueueSync(notificationId)
                     }
 
@@ -146,8 +151,20 @@ object NotificationSaveUtil {
                 }
             }
 
-            if (webhookEnabled) WebhookConfig.enqueue(context)
+            if (webhookEligible) WebhookConfig.enqueue(context)
         }
+    }
+
+    /**
+     * When `webhookSkipOngoing` is set (default), suppress webhook delivery for notifications
+     * that an app marked as "ongoing" (foreground service heartbeats: download progress,
+     * step counters, music players, torrent throughput…). These tick many times per second
+     * and would otherwise spam the webhook endpoint. The notification still goes into the
+     * local log — only HTTP delivery is skipped.
+     */
+    private fun shouldSkipForWebhook(notification: Notification, config: Configuration): Boolean {
+        if (!config.webhookSkipOngoing) return false
+        return (notification.flags and FLAG_ONGOING_EVENT) != 0
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)

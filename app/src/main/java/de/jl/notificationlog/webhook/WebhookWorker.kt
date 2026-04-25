@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import android.util.Base64
 
 class WebhookWorker(
         context: Context,
@@ -73,8 +74,8 @@ class WebhookWorker(
                 connectTimeout = 15_000
                 readTimeout = 30_000
                 setRequestProperty("Content-Type", "text/plain; charset=utf-8")
-                setRequestProperty("Title", sanitizeHeader(item.title.ifBlank { item.packageName }))
-                setRequestProperty("Tags", sanitizeHeader(item.packageName))
+                setRequestProperty("Title", encodeHeader(item.title.ifBlank { item.packageName }))
+                setRequestProperty("Tags", encodeHeader(item.packageName))
                 if (bearerToken.isNotBlank()) {
                     setRequestProperty("Authorization", "Bearer $bearerToken")
                 }
@@ -104,13 +105,19 @@ class WebhookWorker(
         }
     }
 
-    /** ntfy.sh requires header values to be plain ASCII; strip CR/LF and outside printable range. */
-    private fun sanitizeHeader(value: String): String {
-        val sb = StringBuilder(value.length)
-        for (c in value) {
-            if (c.code in 0x20..0x7E) sb.append(c)
-        }
-        return sb.toString().ifEmpty { "-" }
+    /**
+     * HTTP headers must be ASCII (RFC 7230). For values with non-ASCII characters we use
+     * RFC 2047 encoded-word `=?utf-8?B?<base64>?=`, which ntfy.sh decodes back to UTF-8.
+     * Pure-ASCII values pass through verbatim (after CR/LF strip) to keep the wire format
+     * readable in the common case.
+     */
+    private fun encodeHeader(value: String): String {
+        val cleaned = value.replace('\r', ' ').replace('\n', ' ')
+        if (cleaned.isEmpty()) return "-"
+        val needsEncoding = cleaned.any { it.code !in 0x20..0x7E }
+        if (!needsEncoding) return cleaned
+        val b64 = Base64.encodeToString(cleaned.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+        return "=?utf-8?B?$b64?="
     }
 
     companion object {
