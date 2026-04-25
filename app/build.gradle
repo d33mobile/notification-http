@@ -53,4 +53,18 @@ dependencies {
     ksp 'androidx.room:room-compiler:2.7.2'
     implementation 'androidx.paging:paging-runtime:3.3.6'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // HTTP webhook delivery (offline-resilient via WorkManager constraints + backoff)
+    implementation 'androidx.work:work-runtime-ktx:2.10.0'
+
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test.ext:junit:1.2.1'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'androidx.work:work-testing:2.10.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
+
+    androidTestImplementation 'androidx.work:work-testing:2.10.0'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
 }

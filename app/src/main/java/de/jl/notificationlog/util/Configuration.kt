@@ -23,6 +23,9 @@ class Configuration(context: Application) {
         private const val NOTIFICATION_KEEPING_DAYS = "notification_keeping_days"
         private const val HIDE_DUPLICATES = "hide_duplicates"
         private const val REQUIRE_AUTH = "require_auth"
+        private const val WEBHOOK_ENABLED = "webhook_enabled"
+        private const val WEBHOOK_URL = "webhook_url"
+        private const val WEBHOOK_BEARER_TOKEN = "webhook_bearer_token"
 
         private var instance: Configuration? = null
         private val lock = Object()
@@ -154,6 +157,18 @@ class Configuration(context: Application) {
                     .putBoolean(REQUIRE_AUTH, value)
                     .apply()
     }
+
+    var webhookEnabled: Boolean
+        get() = preferences.getBoolean(WEBHOOK_ENABLED, false)
+        set(value) = preferences.edit().putBoolean(WEBHOOK_ENABLED, value).apply()
+
+    var webhookUrl: String
+        get() = preferences.getString(WEBHOOK_URL, "") ?: ""
+        set(value) = preferences.edit().putString(WEBHOOK_URL, value).apply()
+
+    var webhookBearerToken: String
+        get() = preferences.getString(WEBHOOK_BEARER_TOKEN, "") ?: ""
+        set(value) = preferences.edit().putString(WEBHOOK_BEARER_TOKEN, value).apply()
 
     enum class AppSorting {
         Alphabetically,

@@ -7,12 +7,14 @@ import androidx.room.migration.Migration
 import android.content.Context
 import de.jl.notificationlog.data.item.ActiveNotificationItem
 import de.jl.notificationlog.data.item.NotificationItem
+import de.jl.notificationlog.data.item.PendingWebhookDelivery
 
 @androidx.room.Database(
-        version = 6,
+        version = 7,
         entities = [
             NotificationItem::class,
-            ActiveNotificationItem::class
+            ActiveNotificationItem::class,
+            PendingWebhookDelivery::class
         ]
 )
 abstract class AppDatabase: RoomDatabase(), Database {
@@ -86,6 +88,13 @@ abstract class AppDatabase: RoomDatabase(), Database {
                                         // add new indexes
                                         database.execSQL("CREATE INDEX `notifications_index_duplicate_group` ON `notifications` (`duplicate_group_id`)")
                                         database.execSQL("CREATE INDEX `notifications_index_app_duplicate_group` ON `notifications` (`package`, `duplicate_group_id`)")
+                                    }
+                                },
+                                object: Migration(6, 7) {
+                                    override fun migrate(database: SupportSQLiteDatabase) {
+                                        // pending HTTP webhook deliveries — survives crash/reboot until POSTed
+                                        database.execSQL("CREATE TABLE IF NOT EXISTS `pending_webhook_deliveries` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `notification_id` INTEGER NOT NULL, FOREIGN KEY(`notification_id`) REFERENCES `notifications`(`id`) ON UPDATE CASCADE ON DELETE CASCADE)")
+                                        database.execSQL("CREATE INDEX `pending_webhook_deliveries_index_notification_id` ON `pending_webhook_deliveries` (`notification_id`)")
                                     }
                                 }
                         ).build()

@@ -11,6 +11,7 @@ import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.notification.NotificationParser
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.PendingIntentHolder
+import de.jl.notificationlog.webhook.WebhookConfig
 import java.util.concurrent.Executors
 
 object NotificationSaveUtil {
@@ -23,25 +24,34 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification, context)
         val database = AppDatabase.with(context)
+        val webhookEnabled = Configuration.with(context).webhookEnabled
 
         saveThread.submit {
-            val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
-                    packageName = packageName,
-                    time = System.currentTimeMillis(),
-                    title = item.title,
-                    text = item.text,
-                    progress = item.progress,
-                    progressMax = item.progressMax,
-                    progressIndeterminate = item.progressIndeterminate,
-                    isOldestVersion = true,
-                    isNewestVersion = true
-            )
+            database.runInTransaction {
+                val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                        packageName = packageName,
+                        time = System.currentTimeMillis(),
+                        title = item.title,
+                        text = item.text,
+                        progress = item.progress,
+                        progressMax = item.progressMax,
+                        progressIndeterminate = item.progressIndeterminate,
+                        isOldestVersion = true,
+                        isNewestVersion = true
+                )
 
-            // save click action
-            PendingIntentHolder.save(
-                    savedNotificationId = notificationId,
-                    contentIntent = notification.contentIntent
-            )
+                if (webhookEnabled) {
+                    database.pendingWebhookDelivery().enqueueSync(notificationId)
+                }
+
+                // save click action
+                PendingIntentHolder.save(
+                        savedNotificationId = notificationId,
+                        contentIntent = notification.contentIntent
+                )
+            }
+
+            if (webhookEnabled) WebhookConfig.enqueue(context)
         }
     }
 
@@ -53,6 +63,7 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification.notification, context)
         val database = AppDatabase.with(context)
+        val webhookEnabled = Configuration.with(context).webhookEnabled
 
         saveThread.submit {
             database.runInTransaction {
@@ -88,6 +99,10 @@ object NotificationSaveUtil {
                             )
                     )
 
+                    if (webhookEnabled) {
+                        database.pendingWebhookDelivery().enqueueSync(notificationId)
+                    }
+
                     // save click action
                     PendingIntentHolder.save(
                             savedNotificationId = notificationId,
@@ -119,6 +134,10 @@ object NotificationSaveUtil {
                             lastNotificationId = notificationId
                     )
 
+                    if (webhookEnabled) {
+                        database.pendingWebhookDelivery().enqueueSync(notificationId)
+                    }
+
                     // save click action
                     PendingIntentHolder.save(
                             savedNotificationId = notificationId,
@@ -126,6 +145,8 @@ object NotificationSaveUtil {
                     )
                 }
             }
+
+            if (webhookEnabled) WebhookConfig.enqueue(context)
         }
     }
 
