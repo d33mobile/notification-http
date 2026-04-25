@@ -45,7 +45,11 @@ object NotificationSaveUtil {
                         isNewestVersion = true
                 )
 
-                if (webhookEligible) {
+                if (webhookEligible &&
+                        database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
+                    // group_id == id ⇒ first occurrence of this content for this app
+                    // (insertSyncHandlePossibleDuplicate joins identical bodies into a group;
+                    // we only POST the first row of each group, suppressing identical reposts).
                     database.pendingWebhookDelivery().enqueueSync(notificationId)
                 }
 
@@ -106,7 +110,8 @@ object NotificationSaveUtil {
                             )
                     )
 
-                    if (webhookEligible) {
+                    if (webhookEligible &&
+                            database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
                         database.pendingWebhookDelivery().enqueueSync(notificationId)
                     }
 
@@ -141,7 +146,8 @@ object NotificationSaveUtil {
                             lastNotificationId = notificationId
                     )
 
-                    if (webhookEligible) {
+                    if (webhookEligible &&
+                            database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
                         database.pendingWebhookDelivery().enqueueSync(notificationId)
                     }
 
