@@ -72,11 +72,11 @@ jobs:
         run: |
           # Ubuntu 24.04 apt has fdroidserver 2.2.1 with an androguard that
           # doesn't understand resources.arsc emitted by AGP 8.x ("res1 must be
-          # zero!"). Pull a newer version from PyPI; pull system tools (apksigner,
-          # aapt) the python package wraps.
-          sudo apt-get install -y --no-install-recommends apksigner aapt2
+          # zero!"). Pull a newer version from PyPI. apksigner / aapt2 come from
+          # the Android SDK build-tools we already set up via setup-android.
           pip install --user "fdroidserver>=2.4"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/build-tools/35.0.0" >> $GITHUB_PATH
 
       - name: Decode F-Droid index keystore
         run: |
