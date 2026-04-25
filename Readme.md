@@ -1,3 +1,5 @@
+> **This is an unofficial fork** of [jonas-l/notificationlog-android](https://codeberg.org/jonas-l/notificationlog-android) (GPL-3.0-or-later). All upstream functionality is intact; this fork only adds an opt-in HTTP webhook delivery path. Please file issues unrelated to the webhook against the upstream project.
+
 NotificationLog is an Android App which logs the notifications (locally) and allows to view/ export all of them or all of one App.
 
 ## Fork: HTTP webhook delivery

@@ -108,6 +108,6 @@
     <string name="settings_webhook_enabled">Forward notifications via HTTP (ntfy.sh-compatible)</string>
     <string name="settings_webhook_url_hint">Webhook URL (e.g. https://ntfy.sh/your-topic)</string>
     <string name="settings_webhook_bearer_hint">Bearer token (optional)</string>
-    <string name="settings_webhook_skip_ongoing">Skip ongoing notifications</string>
+    <string name="settings_webhook_skip_ongoing">Skip \"ongoing\" notifications</string>
     <string name="settings_webhook_skip_ongoing_hint">Recommended. When off, apps with foreground services (step counter, download progress, torrent throughput, music players) can flood the webhook with many POSTs per second.</string>
 </resources>
