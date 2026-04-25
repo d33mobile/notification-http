@@ -204,6 +204,54 @@ object NotificationSaveUtil {
         }
     }
 
+    /**
+     * Re-emit every notification currently visible in the shade to the webhook.
+     *
+     * Triggered by NotificationListenerService.onListenerConnected, which fires on listener
+     * (re)connect — most importantly after a device reboot, because the OS does not re-fire
+     * onNotificationPosted for notifications that were already visible. Without this replay
+     * the webhook subscriber would silently miss the post-reboot state of the shade.
+     *
+     * Honours the same per-app filter and skip-ongoing toggle as live posts; deduplicates
+     * within the snapshot so a single Title:Body never POSTs twice in one replay. Bypasses
+     * the across-time duplicate_group_id dedup that saveNotificationPosted uses, because the
+     * point of the replay IS to re-send notifications that already have rows from before the
+     * reboot.
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    fun replayActiveForWebhook(active: List<StatusBarNotification>, context: Context) {
+        val config = Configuration.with(context)
+        if (!config.webhookEnabled) return
+        val database = AppDatabase.with(context)
+        saveThread.submit {
+            val seen = HashSet<String>()
+            for (sbn in active) {
+                val pkg = sbn.packageName
+                if (!config.shouldLogNotifications(pkg)) continue
+                if (shouldSkipForWebhook(sbn.notification, config)) continue
+                val item = NotificationParser.parse(sbn.notification, context)
+                if (item.isEmpty) continue
+                val fp = "$pkg|${item.title}|${item.text}"
+                if (!seen.add(fp)) continue
+                database.runInTransaction {
+                    val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                            packageName = pkg,
+                            time = System.currentTimeMillis(),
+                            title = item.title,
+                            text = item.text,
+                            progress = item.progress,
+                            progressMax = item.progressMax,
+                            progressIndeterminate = item.progressIndeterminate,
+                            isOldestVersion = true,
+                            isNewestVersion = true
+                    )
+                    database.pendingWebhookDelivery().enqueueSync(notificationId)
+                }
+            }
+            if (seen.isNotEmpty()) WebhookConfig.enqueue(context)
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun restoreClickHandlers(statusBarNotifications: List<StatusBarNotification>, context: Context) {
         val database = AppDatabase.with(context)

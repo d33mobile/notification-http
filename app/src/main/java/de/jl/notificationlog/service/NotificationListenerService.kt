@@ -17,6 +17,10 @@ class NotificationListenerService : android.service.notification.NotificationLis
     override fun onListenerConnected() {
         super.onListenerConnected()
 
-        NotificationSaveUtil.restoreClickHandlers(activeNotifications.toList(), this)
+        val active = activeNotifications.toList()
+        NotificationSaveUtil.restoreClickHandlers(active, this)
+        // After a reboot the OS does not re-fire onNotificationPosted for what's already in the
+        // shade; without this replay the webhook would silently miss the current state.
+        NotificationSaveUtil.replayActiveForWebhook(active, this)
     }
 }
