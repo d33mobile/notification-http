@@ -69,7 +69,14 @@ jobs:
           fetch-depth: 0
 
       - name: Install fdroidserver
-        run: sudo apt-get install -y --no-install-recommends fdroidserver
+        run: |
+          # Ubuntu 24.04 apt has fdroidserver 2.2.1 with an androguard that
+          # doesn't understand resources.arsc emitted by AGP 8.x ("res1 must be
+          # zero!"). Pull a newer version from PyPI; pull system tools (apksigner,
+          # aapt) the python package wraps.
+          sudo apt-get install -y --no-install-recommends apksigner aapt2
+          pip install --user "fdroidserver>=2.4"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Decode F-Droid index keystore
         run: |
