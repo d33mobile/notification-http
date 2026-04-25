@@ -20,6 +20,23 @@ is dropped just because the network was down when it arrived.
 
 Configure under Settings → "Forward notifications via HTTP".
 
+### Install via F-Droid
+
+This fork ships its own F-Droid repo (auto-built on every commit to
+`webhook-http`, hosted on GitHub Pages):
+
+| | |
+|---|---|
+| URL         | `https://d33mobile.github.io/notification-http/fdroid/repo` |
+| Fingerprint | `E2978C4365F48A686E19A41CE94D226643686468FC94E5D4D2EBCADD49C3309B` |
+
+Open the F-Droid app on your phone → *Settings* → *Repositories* → **+** → paste both.
+Updates ship automatically with every push to `webhook-http`. Landing page:
+<https://d33mobile.github.io/notification-http/>
+
+This fork uses the application id `pl.d33.notificationlog.ntfy` (different from
+upstream's `de.jl.notificationlog`) so both apps can be installed side by side.
+
 ### Tests
 
 * `./gradlew :app:test` — 9 Robolectric + MockWebServer cases that exercise

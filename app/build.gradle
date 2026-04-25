@@ -5,11 +5,16 @@ apply plugin: 'com.google.devtools.ksp'
 android {
     compileSdk 35
     defaultConfig {
-        applicationId "de.jl.notificationlog"
+        // Renamed from upstream's de.jl.notificationlog so this fork can be installed
+        // alongside the upstream app. The Kotlin namespace stays at de.jl.notificationlog
+        // so we don't have to move 40+ source files.
+        applicationId "pl.d33.notificationlog.ntfy"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 22
-        versionName "1.21"
+        // CI workflow stamps these from git rev-list count and git describe; local
+        // builds fall back to the upstream values for parity.
+        versionCode (System.getenv("VERSION_CODE")?.toInteger() ?: 22)
+        versionName System.getenv("VERSION_NAME") ?: "1.21"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas".toString())
@@ -20,7 +25,13 @@ android {
     }
     signingConfigs {
         release {
-            // empty
+            def ks = System.getenv("RELEASE_KEYSTORE")
+            if (ks != null && file(ks).exists()) {
+                storeFile file(ks)
+                storePassword System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+            }
         }
     }
     buildTypes {

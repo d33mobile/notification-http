@@ -7,3 +7,5 @@
 /captures
 .externalNativeBuild
 .idea
+scripts/ntfy-test.log
+.claude/

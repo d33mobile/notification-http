@@ -1,0 +1,26 @@
+repo_url: "https://d33mobile.github.io/notification-http/fdroid/repo"
+repo_name: "NotificationLog ntfy fork"
+repo_icon: "icon.png"
+repo_description: |
+  Self-hosted F-Droid repo for the NotificationLog HTTP webhook fork
+  (https://github.com/d33mobile/notification-http). Single app:
+  pl.d33.notificationlog.ntfy. Each push to the webhook-http branch
+  ships a new versionCode here.
+
+archive_url: "https://d33mobile.github.io/notification-http/fdroid/archive"
+archive_name: "NotificationLog ntfy fork (old versions)"
+archive_description: |
+  Older builds of the NotificationLog ntfy fork.
+archive_older: 12
+
+# Local keystore path is overridden by the workflow via env / --keystore
+keystore: "keystore.p12"
+repo_keyalias: "repo_signing_key"
+
+# These come from env vars (FDROID_KEYSTORE_PASSWORD) so secrets stay out of git.
+# fdroidserver supports interpolation via os.environ when value is null.
+keystorepass: ${FDROID_KEYSTORE_PASSWORD}
+keypass: ${FDROID_KEYSTORE_PASSWORD}
+
+# We ship pre-built APKs only — no source builds needed.
+make_current_version_link: true

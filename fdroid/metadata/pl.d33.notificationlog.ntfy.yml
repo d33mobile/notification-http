@@ -1,0 +1,48 @@
+Categories:
+  - System
+License: GPL-3.0-or-later
+AuthorName: jonas-l (upstream) + d33mobile (fork)
+WebSite: https://github.com/d33mobile/notification-http
+SourceCode: https://github.com/d33mobile/notification-http
+IssueTracker: https://github.com/d33mobile/notification-http/issues
+Translation: https://codeberg.org/jonas-l/notificationlog-android
+
+AutoName: NotificationLog (ntfy)
+
+Summary: Log notifications locally and forward to ntfy.sh
+
+Description: |-
+  Unofficial fork of jonas-l/notificationlog-android (GPL-3.0-or-later) that
+  adds optional ntfy.sh-compatible HTTP webhook delivery on top of upstream's
+  local notification logger.
+
+  All upstream functionality is intact:
+
+    * captures every notification via NotificationListenerService
+    * stores them locally in a Room database (no network access required)
+    * per-app whitelist / blacklist
+    * export and clear
+
+  Fork additions (all opt-in under Settings):
+
+    * forward each logged notification to a configurable HTTP endpoint
+      (Title / Tags / optional Bearer auth headers, body = notification text)
+    * offline-resilient: pending deliveries persisted in the same Room
+      transaction as the log row, drained by WorkManager with NetworkType.CONNECTED
+      and exponential backoff. Survives airplane mode, process kill, reboot.
+    * "Skip ongoing notifications" toggle (default ON) suppresses
+      foreground-service heartbeats from torrent clients, music players,
+      step counters, etc.
+    * UTF-8 in title via RFC 2047 encoded-word so Polish/German chars survive.
+    * App label prepended to the Title header so subscribers know which
+      app the notification came from.
+
+  Requires the user to grant Notification Listener access on first run.
+
+AntiFeatures:
+  - NonFreeNet:
+      en-US: |-
+        The webhook delivery feature, when enabled, transmits notification
+        content to a user-configured HTTP endpoint (typically ntfy.sh or
+        a self-hosted ntfy server). Off by default; the local-log path is
+        unaffected.

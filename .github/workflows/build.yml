@@ -1,0 +1,108 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches: [webhook-http]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit to gh-pages
+
+concurrency:
+  group: deploy-fdroid
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      ANDROID_HOME: ${{ github.workspace }}/.android-sdk
+    steps:
+      - name: Checkout source (full history for git rev-list)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle (with cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Android SDK (platform 35, build-tools 35.0.0)
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;35.0.0'
+
+      - name: Compute version from git
+        run: |
+          # versionCode must be monotonically increasing — rev-list count is.
+          echo "VERSION_CODE=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          echo "VERSION_NAME=ntfy-$(git describe --tags --always --abbrev=7)" >> $GITHUB_ENV
+
+      - name: Decode APK signing keystore
+        run: |
+          echo '${{ secrets.RELEASE_KEYSTORE_BASE64 }}' | base64 -d > $RUNNER_TEMP/release.jks
+          test -s $RUNNER_TEMP/release.jks
+          echo "RELEASE_KEYSTORE=$RUNNER_TEMP/release.jks" >> $GITHUB_ENV
+
+      - name: Run unit tests + assemble release APK
+        env:
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew :app:test :app:assembleRelease --no-daemon
+
+      - name: Verify APK is signed with the expected cert
+        run: |
+          $ANDROID_HOME/build-tools/35.0.0/apksigner verify --print-certs \
+              app/build/outputs/apk/release/app-release.apk
+
+      - name: Checkout gh-pages into ./pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 0
+
+      - name: Install fdroidserver
+        run: sudo apt-get install -y --no-install-recommends fdroidserver
+
+      - name: Decode F-Droid index keystore
+        run: |
+          echo '${{ secrets.FDROID_KEYSTORE_BASE64 }}' | base64 -d \
+              > pages/fdroid/keystore.p12
+          test -s pages/fdroid/keystore.p12
+
+      - name: Materialise F-Droid config + drop new APK
+        env:
+          FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
+        run: |
+          mkdir -p pages/fdroid/repo pages/fdroid/metadata
+          envsubst < fdroid/config.yml.template > pages/fdroid/config.yml
+          chmod 600 pages/fdroid/config.yml pages/fdroid/keystore.p12
+          cp -f fdroid/metadata/*.yml pages/fdroid/metadata/
+          cp app/build/outputs/apk/release/app-release.apk \
+             pages/fdroid/repo/pl.d33.notificationlog.ntfy_${VERSION_CODE}.apk
+
+      - name: Run fdroid update (regenerate index)
+        working-directory: pages/fdroid
+        run: fdroid update --create-metadata --delete-unknown
+
+      - name: Commit + push to gh-pages
+        working-directory: pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # don't commit the keystore or the materialised config (they hold secrets)
+          rm -f fdroid/keystore.p12 fdroid/config.yml
+          git add fdroid/repo fdroid/metadata fdroid/archive 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no changes to deploy"
+            exit 0
+          fi
+          git commit -m "Deploy ${VERSION_NAME} (vc=${VERSION_CODE})"
+          git push

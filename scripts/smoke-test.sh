@@ -10,8 +10,9 @@ set -euo pipefail
 PORT=${PORT:-8765}
 LOG=$(mktemp -t ntfy-XXXXXX.log)
 APK=app/build/outputs/apk/debug/app-debug.apk
-PKG=de.jl.notificationlog
-LISTENER="$PKG/.service.NotificationListenerService"
+PKG=pl.d33.notificationlog.ntfy
+# The Listener class kept upstream's Kotlin namespace; only applicationId changed.
+LISTENER="$PKG/de.jl.notificationlog.service.NotificationListenerService"
 URL="http://10.0.2.2:$PORT/topic"
 
 [[ -f "$APK" ]] || { echo "APK not built — run ./gradlew :app:assembleDebug" >&2; exit 1; }
