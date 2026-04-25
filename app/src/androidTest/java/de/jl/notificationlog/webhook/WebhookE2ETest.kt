@@ -3,13 +3,9 @@ package de.jl.notificationlog.webhook
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.work.Configuration as WorkConfig
-import androidx.work.Constraints
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.testing.WorkManagerTestInitHelper
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.util.Configuration
 import okhttp3.mockwebserver.MockResponse
@@ -51,11 +47,9 @@ class WebhookE2ETest {
             val pid = db.pendingWebhookDelivery().findPendingIdByNotificationSync(n.id) ?: break
             db.pendingWebhookDelivery().deleteSync(pid)
         }
-
-        WorkManagerTestInitHelper.initializeTestWorkManager(
-                context,
-                WorkConfig.Builder().setMinimumLoggingLevel(android.util.Log.DEBUG).build()
-        )
+        // Note: Application.onCreate already initialized real WorkManager. We use it as-is and
+        // skip NetworkType.CONNECTED constraint in the test request — the worker code itself
+        // (drain loop, HTTP, deletion) is what we are exercising end-to-end.
     }
 
     @After
@@ -75,18 +69,9 @@ class WebhookE2ETest {
         db.pendingWebhookDelivery().enqueueSync(notifId)
         server.enqueue(MockResponse().setResponseCode(200))
 
-        val request = OneTimeWorkRequestBuilder<WebhookWorker>()
-                .setConstraints(Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build())
-                .build()
+        val request = OneTimeWorkRequestBuilder<WebhookWorker>().build()
         WorkManager.getInstance(context).enqueue(request).result.get()
 
-        // Drive constraints via TestDriver — pretend the network is connected
-        WorkManagerTestInitHelper.getTestDriver(context)!!
-                .setAllConstraintsMet(request.id)
-
-        // Wait for completion
         val info = waitForWorker(request.id)
         assertEquals(WorkInfo.State.SUCCEEDED, info.state)
 
@@ -99,11 +84,11 @@ class WebhookE2ETest {
 
     private fun waitForWorker(id: java.util.UUID): WorkInfo {
         val wm = WorkManager.getInstance(context)
-        val deadline = System.currentTimeMillis() + 10_000
+        val deadline = System.currentTimeMillis() + 30_000
         while (System.currentTimeMillis() < deadline) {
             val info = wm.getWorkInfoById(id).get()
             if (info != null && info.state.isFinished) return info
-            Thread.sleep(100)
+            Thread.sleep(200)
         }
         return wm.getWorkInfoById(id).get()!!
     }

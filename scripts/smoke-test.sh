@@ -16,6 +16,15 @@ URL="http://10.0.2.2:$PORT/topic"
 
 [[ -f "$APK" ]] || { echo "APK not built — run ./gradlew :app:assembleDebug" >&2; exit 1; }
 
+# `cmd notification post` is API 30+. Older devices need a helper app to fire
+# a real notification, which is out of scope for this script.
+SDK=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
+if [[ "$SDK" -lt 30 ]]; then
+    echo "smoke-test.sh needs API 30+ for 'cmd notification post' (device is API $SDK)." >&2
+    echo "Use connectedAndroidTest for the in-process E2E coverage instead." >&2
+    exit 2
+fi
+
 cleanup() {
     [[ -n "${SRV_PID:-}" ]] && kill "$SRV_PID" 2>/dev/null || true
     rm -f "$LOG"
