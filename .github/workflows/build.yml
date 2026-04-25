@@ -92,6 +92,9 @@ jobs:
           envsubst < fdroid/config.yml.template > pages/fdroid/config.yml
           chmod 600 pages/fdroid/config.yml pages/fdroid/keystore.p12
           cp -f fdroid/metadata/*.yml pages/fdroid/metadata/
+          # fdroid update crashes on zero-byte files (CRITICAL: '.gitkeep' is
+          # zero size!) so strip placeholders left from the gh-pages init.
+          find pages/fdroid/repo pages/fdroid/metadata -name .gitkeep -delete
           cp app/build/outputs/apk/release/app-release.apk \
              pages/fdroid/repo/pl.d33.notificationlog.ntfy_${VERSION_CODE}.apk
 
