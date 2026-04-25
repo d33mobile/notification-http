@@ -40,9 +40,4 @@ Description: |-
   Requires the user to grant Notification Listener access on first run.
 
 AntiFeatures:
-  - NonFreeNet:
-      en-US: |-
-        The webhook delivery feature, when enabled, transmits notification
-        content to a user-configured HTTP endpoint (typically ntfy.sh or
-        a self-hosted ntfy server). Off by default; the local-log path is
-        unaffected.
+  - NonFreeNet     # opt-in webhook posts to a user-configured HTTP endpoint
