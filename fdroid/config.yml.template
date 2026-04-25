@@ -1,6 +1,6 @@
 repo_url: "https://d33mobile.github.io/notification-http/fdroid/repo"
 repo_name: "NotificationLog ntfy fork"
-repo_icon: "icon.png"
+# repo_icon — fdroidserver auto-generates a placeholder if omitted
 repo_description: |
   Self-hosted F-Droid repo for the NotificationLog HTTP webhook fork
   (https://github.com/d33mobile/notification-http). Single app:
