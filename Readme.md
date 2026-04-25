@@ -18,6 +18,19 @@ is dropped just because the network was down when it arrived.
 
 Configure under Settings → "Forward notifications via HTTP".
 
+### Tests
+
+* `./gradlew :app:test` — 9 Robolectric + MockWebServer cases that exercise
+  the full delivery contract (success, 4xx drop, 5xx retry, FIFO, recovery
+  after restart, runtime disable, blank URL, bearer header presence/absence)
+  on a real Room DB. No emulator required.
+* `./gradlew :app:connectedAndroidTest` — `WebhookE2ETest` runs the same
+  flow against real Room + WorkManager + HttpURLConnection on a connected
+  device or emulator.
+* `scripts/smoke-test.sh` — installs the debug APK, posts notifications
+  online + offline, and asserts ordered delivery once the network returns.
+  Use this when you have a device/emulator handy. Requires `jq`.
+
 ## Screenshots
 
 ![screenshot showing the list of Apps in NotificationLog](./app/src/main/play/en-US/listing/phoneScreenshots/391911807240794485.png)
