@@ -11,6 +11,7 @@ import de.jl.notificationlog.databinding.ActivitySettingsBinding
 import de.jl.notificationlog.ui.App
 import de.jl.notificationlog.ui.AppsUtil
 import de.jl.notificationlog.ui.CheckAuthActivity
+import de.jl.notificationlog.webhook.WebhookConfig
 
 class SettingsActivity : CheckAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +20,34 @@ class SettingsActivity : CheckAuthActivity() {
         val binding = ActivitySettingsBinding.inflate(layoutInflater).also { setContentView(it.root) }
 
         setSupportActionBar(binding.toolbar)
+
+        binding.content.webhookEnabledSwitch.isChecked = configuration.webhookEnabled
+        binding.content.webhookUrl.setText(configuration.webhookUrl)
+        binding.content.webhookBearerToken.setText(configuration.webhookBearerToken)
+
+        binding.content.webhookEnabledSwitch.setOnCheckedChangeListener { _, checked ->
+            configuration.webhookEnabled = checked
+            if (checked) WebhookConfig.enqueue(this)
+        }
+        binding.content.webhookUrl.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                configuration.webhookUrl = s?.toString() ?: ""
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        binding.content.webhookBearerToken.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                configuration.webhookBearerToken = s?.toString() ?: ""
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.content.webhookSkipOngoingSwitch.isChecked = configuration.webhookSkipOngoing
+        binding.content.webhookSkipOngoingSwitch.setOnCheckedChangeListener { _, checked ->
+            configuration.webhookSkipOngoing = checked
+        }
 
         binding.content.modeRadioGroup.check(when (configuration.isWhitelistMode) {
             true -> R.id.mode_whitelist
