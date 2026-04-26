@@ -152,6 +152,30 @@ class WebhookWorkerTest {
     }
 
     @Test
+    fun `408 Request Timeout retries (transient)`() {
+        enable(server.url("/t").toString())
+        insertNotification("a", "b")
+        server.enqueue(MockResponse().setResponseCode(408))
+
+        val result = runWorker()
+
+        assertEquals(ListenableWorker.Result.retry(), result)
+        assertEquals(1, db.pendingWebhookDelivery().countSync())
+    }
+
+    @Test
+    fun `429 Too Many Requests retries (transient)`() {
+        enable(server.url("/t").toString())
+        insertNotification("a", "b")
+        server.enqueue(MockResponse().setResponseCode(429))
+
+        val result = runWorker()
+
+        assertEquals(ListenableWorker.Result.retry(), result)
+        assertEquals(1, db.pendingWebhookDelivery().countSync())
+    }
+
+    @Test
     fun `4xx drops pending row to avoid permanent stall`() {
         enable(server.url("/t").toString())
         insertNotification("a", "b")

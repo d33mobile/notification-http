@@ -85,6 +85,13 @@ class WebhookWorker(
             val code = conn.responseCode
             when {
                 code in 200..299 -> Outcome.Success
+                // 408 Request Timeout and 429 Too Many Requests are transient — proxies in
+                // front of ntfy (Cloudflare, nginx) emit these when the origin is overloaded
+                // or restarting. Retry rather than drop.
+                code == 408 || code == 429 -> {
+                    Log.w(TAG, "Webhook ${code} (transient) — will retry")
+                    Outcome.Retry
+                }
                 code in 400..499 -> {
                     Log.w(TAG, "Webhook 4xx (dropping notification ${item.id}): $code")
                     Outcome.ClientError
@@ -98,9 +105,10 @@ class WebhookWorker(
             Log.w(TAG, "Webhook IO error — will retry", e)
             Outcome.Retry
         } catch (e: Exception) {
-            // unexpected: don't loop forever, drop
-            Log.e(TAG, "Webhook unexpected error (dropping notification ${item.id})", e)
-            Outcome.ClientError
+            // Unknown error — be defensive: prefer the chance of duplicate delivery over
+            // silently losing the notification. WorkManager will keep retrying with backoff.
+            Log.e(TAG, "Webhook unexpected error — will retry", e)
+            Outcome.Retry
         } finally {
             conn?.disconnect()
         }
