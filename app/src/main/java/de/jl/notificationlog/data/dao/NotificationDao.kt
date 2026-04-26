@@ -89,6 +89,16 @@ abstract class NotificationDao {
     @Query("UPDATE NOTIFICATIONS SET is_newest_version = :isNewestNotification WHERE id = :id")
     abstract fun setIsNewestNotificationSync(id: Long, isNewestNotification: Boolean)
 
+    /**
+     * Returns the duplicate_group_id of an inserted notification.
+     * After insertSyncHandlePossibleDuplicate(): if group_id == id, the row is the first of a
+     * new content group (genuinely new title/text/progress for that app); if group_id != id,
+     * the row carries the same content as a strictly earlier one in the same package — i.e. a
+     * true content-level duplicate. The webhook path uses this signal to skip identical resends.
+     */
+    @Query("SELECT duplicate_group_id FROM notifications WHERE id = :id")
+    abstract fun getDuplicateGroupIdSync(id: Long): Long
+
     @RawQuery(observedEntities = [ NotificationItem::class ])
     protected abstract fun getNotificationsLive(query: SupportSQLiteQuery): DataSource.Factory<Int, NotificationItem>
 

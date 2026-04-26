@@ -2,8 +2,11 @@ package de.jl.notificationlog.service
 
 import android.annotation.TargetApi
 import android.app.Notification
+import android.app.Notification.FLAG_FOREGROUND_SERVICE
+import android.app.Notification.FLAG_ONGOING_EVENT
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.service.notification.StatusBarNotification
 import de.jl.notificationlog.data.AppDatabase
 import de.jl.notificationlog.data.item.ActiveNotificationItem
@@ -11,6 +14,7 @@ import de.jl.notificationlog.data.item.NotificationItem
 import de.jl.notificationlog.notification.NotificationParser
 import de.jl.notificationlog.util.Configuration
 import de.jl.notificationlog.util.PendingIntentHolder
+import de.jl.notificationlog.webhook.WebhookConfig
 import java.util.concurrent.Executors
 
 object NotificationSaveUtil {
@@ -23,25 +27,40 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification, context)
         val database = AppDatabase.with(context)
+        val config = Configuration.with(context)
+        val webhookEnabled = config.webhookEnabled
+        val webhookEligible = webhookEnabled && !shouldSkipForWebhook(notification, config)
 
         saveThread.submit {
-            val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
-                    packageName = packageName,
-                    time = System.currentTimeMillis(),
-                    title = item.title,
-                    text = item.text,
-                    progress = item.progress,
-                    progressMax = item.progressMax,
-                    progressIndeterminate = item.progressIndeterminate,
-                    isOldestVersion = true,
-                    isNewestVersion = true
-            )
+            database.runInTransaction {
+                val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                        packageName = packageName,
+                        time = System.currentTimeMillis(),
+                        title = item.title,
+                        text = item.text,
+                        progress = item.progress,
+                        progressMax = item.progressMax,
+                        progressIndeterminate = item.progressIndeterminate,
+                        isOldestVersion = true,
+                        isNewestVersion = true
+                )
 
-            // save click action
-            PendingIntentHolder.save(
-                    savedNotificationId = notificationId,
-                    contentIntent = notification.contentIntent
-            )
+                if (webhookEligible &&
+                        database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
+                    // group_id == id ⇒ first occurrence of this content for this app
+                    // (insertSyncHandlePossibleDuplicate joins identical bodies into a group;
+                    // we only POST the first row of each group, suppressing identical reposts).
+                    database.pendingWebhookDelivery().enqueueSync(notificationId)
+                }
+
+                // save click action
+                PendingIntentHolder.save(
+                        savedNotificationId = notificationId,
+                        contentIntent = notification.contentIntent
+                )
+            }
+
+            if (webhookEligible) WebhookConfig.enqueue(context)
         }
     }
 
@@ -53,6 +72,9 @@ object NotificationSaveUtil {
 
         val item = NotificationParser.parse(notification.notification, context)
         val database = AppDatabase.with(context)
+        val config = Configuration.with(context)
+        val webhookEnabled = config.webhookEnabled
+        val webhookEligible = webhookEnabled && !shouldSkipForWebhook(notification.notification, config)
 
         saveThread.submit {
             database.runInTransaction {
@@ -88,6 +110,11 @@ object NotificationSaveUtil {
                             )
                     )
 
+                    if (webhookEligible &&
+                            database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
+                        database.pendingWebhookDelivery().enqueueSync(notificationId)
+                    }
+
                     // save click action
                     PendingIntentHolder.save(
                             savedNotificationId = notificationId,
@@ -119,6 +146,11 @@ object NotificationSaveUtil {
                             lastNotificationId = notificationId
                     )
 
+                    if (webhookEligible &&
+                            database.notification().getDuplicateGroupIdSync(notificationId) == notificationId) {
+                        database.pendingWebhookDelivery().enqueueSync(notificationId)
+                    }
+
                     // save click action
                     PendingIntentHolder.save(
                             savedNotificationId = notificationId,
@@ -126,7 +158,28 @@ object NotificationSaveUtil {
                     )
                 }
             }
+
+            if (webhookEligible) WebhookConfig.enqueue(context)
         }
+    }
+
+    /**
+     * When `webhookSkipOngoing` is set (default), suppress webhook delivery for notifications
+     * that an app marked as "ongoing" or that the system marked as belonging to a foreground
+     * service. These tick many times per second (download progress, step counters, music
+     * players, torrent throughput, voice recorders…) and would otherwise spam the webhook.
+     * The notification still goes into the local log — only HTTP delivery is skipped.
+     *
+     * We OR both flags because some apps call startForeground() without setOngoing(true), so
+     * only FLAG_FOREGROUND_SERVICE ends up set; conversely setOngoing(true) without a
+     * foreground service only sets FLAG_ONGOING_EVENT.
+     */
+    private fun shouldSkipForWebhook(notification: Notification, config: Configuration): Boolean {
+        if (!config.webhookSkipOngoing) return false
+        val mask = FLAG_ONGOING_EVENT or FLAG_FOREGROUND_SERVICE
+        val skip = (notification.flags and mask) != 0
+        if (skip) Log.d("NotificationSaveUtil", "skip-webhook (flags=0x${notification.flags.toString(16)})")
+        return skip
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -148,6 +201,54 @@ object NotificationSaveUtil {
                     systemId = notificationId,
                     systemTag = prepareTag(notificationTag)
             )
+        }
+    }
+
+    /**
+     * Re-emit every notification currently visible in the shade to the webhook.
+     *
+     * Triggered by NotificationListenerService.onListenerConnected, which fires on listener
+     * (re)connect — most importantly after a device reboot, because the OS does not re-fire
+     * onNotificationPosted for notifications that were already visible. Without this replay
+     * the webhook subscriber would silently miss the post-reboot state of the shade.
+     *
+     * Honours the same per-app filter and skip-ongoing toggle as live posts; deduplicates
+     * within the snapshot so a single Title:Body never POSTs twice in one replay. Bypasses
+     * the across-time duplicate_group_id dedup that saveNotificationPosted uses, because the
+     * point of the replay IS to re-send notifications that already have rows from before the
+     * reboot.
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    fun replayActiveForWebhook(active: List<StatusBarNotification>, context: Context) {
+        val config = Configuration.with(context)
+        if (!config.webhookEnabled) return
+        val database = AppDatabase.with(context)
+        saveThread.submit {
+            val seen = HashSet<String>()
+            for (sbn in active) {
+                val pkg = sbn.packageName
+                if (!config.shouldLogNotifications(pkg)) continue
+                if (shouldSkipForWebhook(sbn.notification, config)) continue
+                val item = NotificationParser.parse(sbn.notification, context)
+                if (item.isEmpty) continue
+                val fp = "$pkg|${item.title}|${item.text}"
+                if (!seen.add(fp)) continue
+                database.runInTransaction {
+                    val notificationId = database.notification().insertSyncHandlePossibleDuplicate(
+                            packageName = pkg,
+                            time = System.currentTimeMillis(),
+                            title = item.title,
+                            text = item.text,
+                            progress = item.progress,
+                            progressMax = item.progressMax,
+                            progressIndeterminate = item.progressIndeterminate,
+                            isOldestVersion = true,
+                            isNewestVersion = true
+                    )
+                    database.pendingWebhookDelivery().enqueueSync(notificationId)
+                }
+            }
+            if (seen.isNotEmpty()) WebhookConfig.enqueue(context)
         }
     }
 
